@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>支付记录</title>
+    <link rel="stylesheet" href="../css/framework7.ios.min.css">
+    <link rel="stylesheet" href="../css/framework7.ios.colors.min.css">
+    <link rel="stylesheet" href="../css/weui/weui.css">
+    <link rel="stylesheet" href="../css/main.css">
+    <style>
+        .picker-modal {
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+<div class="views">
+    <div class="view view-main">
+        <div class="pages">
+            <div data-page="purchaseHistory" class="page no-navbar no-toolbar">
+                <div class="page-content" style="padding-top:0">
+                    <div id="my_container" class="">
+
+                    </div>
+                    <div class="picker-modal picker-info">
+                        <div class="toolbar">
+                            <div class="toolbar-inner">
+                                <div class="left"></div>
+                                <div class="right"><a href="#" class="close-picker">确定</a></div>
+                            </div>
+                        </div>
+                        <div class="picker-modal-inner">
+                            <div class="content-block  bg-white" style="margin:0">
+                                <div class="common_line flex_lr">
+                                    <span>支付金额</span>
+                                    <aside id="Price"></aside>
+                                </div>
+                                <div class="common_line flex_lr">
+                                    <span>商品名称</span>
+                                    <aside id="ProductTypeName"></aside>
+                                </div>
+                                <div class="common_line flex_lr">
+                                    <span>服务类型</span>
+                                    <aside id="PriceAndCount"></aside>
+                                </div>
+                                <div class="common_line flex_lr">
+                                    <span>支付时间</span>
+                                    <aside id="Time"></aside>
+                                </div>
+                                <div class="common_line flex_lr">
+                                    <span>支付方式</span>
+                                    <aside id="ModeOfPayment"></aside>
+                                </div>
+                                <div class="common_line flex_lr">
+                                    <span>交易单号</span>
+                                    <aside id="BoughtNumber"></aside>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="../js/framework7.js"></script>
+<script type="text/javascript" src="../js/jquery.js"></script>
+<script type="text/javascript" src="../js/store.min.js"></script>
+<script type="text/javascript">
+    var myApp = new Framework7({
+        onAjaxStart: function () {
+            myApp.showIndicator();
+        },
+        onAjaxComplete: function () {
+            myApp.hideIndicator();
+        },
+        modalCloseByOutside: true,
+        actionsCloseByOutside: true,
+        popupCloseByOutside: true,
+        modalTitle: '提示',
+        init: false
+    });
+    var $$ = Dom7;
+    var mainView = myApp.addView('.view-main', {
+        dynamicNavbar: true,
+        domCache: true
+    });
+    var historyList;
+    myApp.onPageInit('purchaseHistory', function () {
+        getHistory();
+    });
+    function getHistory() {
+        $$.ajax({
+            url: '/product/history.do',
+            dataType: 'json',
+            method: 'get',
+            data: {},
+            beforeSend: function () {
+                myApp.showIndicator();
+            },
+            complete: function () {
+                myApp.hideIndicator();
+            },
+            success: function (data) {
+                historyList = data.boughtList;
+                if (data.boughtList.length === 0) {
+                    $$('#my_container').html('<div class="empty_tips">暂无记录</div><div class="empty_tips">如有疑问，请拨打电话：<a class="external" href="tel:' + store.get('imgTel').telephone + '">' + store.get('imgTel').telephone + '</a></div>');
+                }
+                else {
+                    $$('#my_container').html('<div class="my_counts_box" id="typeList" ></div><div class="common_line_box m-t" id="historyList"></div>');
+                    var typeHtml = '', listHtml = '';
+                    for (var x in data.productResidueCount) {
+                        typeHtml += '<div class="my_counts_item" ><h4>' + data.productResidueCount[x].outName + '</h4><h5>(' + data.productResidueCount[x].propertyName + '）' + '</h5><h6>剩余次数：' + data.productResidueCount[x].count + '</h6></div>';
+                    }
+                    $$('#typeList').html(typeHtml);
+                    $$.each(data.boughtList, function (index, list) {
+                        listHtml += '<div class="common_line"  onclick="showDetail(this)"><div class="flex_lr m-b"><h4 class="f8"><b>订单号：' + list.boughtNumber + '</b></h4><span class="text-primary">' + list.productTypeName + '</span></div><div class="flex_lr"><span>' + list.price + '元' + list.count + '次</span><span>' + list.time + '</span></div></div>';
+                    });
+                    $$('#historyList').html(listHtml);
+                }
+            }, error: function () {
+                window.location.href = "/view/error.html";
+            }
+        })
+    }
+    function showDetail(e) {
+        var inx = $$(e).index();
+        $$('#Price').text(historyList[inx].price + '元');
+        $$('#ProductTypeName').text(historyList[inx].productTypeName);
+        $$('#PriceAndCount').text(historyList[inx].price + '元' + historyList[inx].count + '次');
+        $$('#Time').text(historyList[inx].time);
+        $$('#ModeOfPayment').text(historyList[inx].modeOfPayment);
+        $$('#BoughtNumber').text(historyList[inx].boughtNumber);
+        myApp.pickerModal('.picker-info');
+    }
+    myApp.init();
+</script>
+</body>
+</html>

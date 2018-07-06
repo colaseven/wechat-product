@@ -1,0 +1,520 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.caad.wechat</groupId>
+    <artifactId>wechat-parent</artifactId>
+    <version>1.1.0</version>
+    <packaging>pom</packaging>
+
+
+    <!-- 实现聚合 -->
+    <modules>
+        <!--<module>../wechat-apidemo</module>-->
+        <module>../wechat-huijia</module>
+        <module>../wechat-viss</module>
+    </modules>
+
+    <properties>
+        <!-- spring版本号 -->
+        <spring.version>4.1.0.RELEASE</spring.version>
+        <spring-data-jpa.version>1.7.0.RELEASE</spring-data-jpa.version>
+        <!-- mybatis版本号 -->
+        <mybatis.version>3.2.4</mybatis.version>
+        <hibernate.version>4.3.6.Final</hibernate.version>
+        <hibernate-validator.version>5.0.3.Final</hibernate-validator.version>
+        <jackson.version>2.4.2</jackson.version>
+        <failOnMissingWebXml>false</failOnMissingWebXml>
+        <commons-lang3.version>3.5</commons-lang3.version>
+        <fastdfs-client.version>1.25</fastdfs-client.version>
+        <commons-fileupload.version>1.3.2</commons-fileupload.version>
+        <!-- 阿里巴巴数据源 包 -->
+        <druid.version>1.0.2</druid.version>
+        <!-- JDBC driver -->
+        <mysql-connector-java.version>5.1.32</mysql-connector-java.version>
+        <mybatis-spring.version>1.2.2</mybatis-spring.version>
+        <jtds.version>1.2.4</jtds.version>
+        <!-- junit测试包 -->
+        <junit.version>4.11</junit.version>
+        <!-- json数据 -->
+        <jackson-mapper-asl.version>1.9.13</jackson-mapper-asl.version>
+        <!-- 日志文件管理包 -->
+        <log4j.version>1.2.17</log4j.version>
+        <slf4j-api.version>1.6.6</slf4j-api.version>
+        <slf4j-log4j12.version>1.6.6</slf4j-log4j12.version>
+        <commons-logging.version>1.1.2</commons-logging.version>
+        <!-- 添加Servlet -->
+        <proxool.version>0.9.1</proxool.version>
+        <hamcrest-core.version>1.3</hamcrest-core.version>
+        <servlet-api.version>2.5</servlet-api.version>
+        <xstream.version>1.3.1</xstream.version>
+        <spring-data-redis.version>1.6.2.RELEASE</spring-data-redis.version>
+        <commons-pool2.version>2.4.2</commons-pool2.version>
+        <commons-codec.version>1.3</commons-codec.version>
+        <json.version>20090211</json.version>
+        <jstl.version>1.2</jstl.version>
+        <standard.version>1.1.2</standard.version>
+        <httpclient.version>4.5.1</httpclient.version>
+        <!-- httpclient-->
+        <commons-httpclient.version>3.0.1</commons-httpclient.version>
+        <commons-lang.version>2.4</commons-lang.version>
+        <commons-collections.version>3.2.1</commons-collections.version>
+        <json-lib.version>2.4</json-lib.version>
+        <fastjson.version>1.2.17</fastjson.version>
+        <jedis.version>2.9.0</jedis.version>
+        <dom4j.version>1.6.1</dom4j.version>
+        <servlet-api.version>2.5</servlet-api.version>
+        <cln-common.version>1.3.4</cln-common.version>
+        <commons-io.version>2.4</commons-io.version>
+        <vissapi-sdk.version>1.1.4</vissapi-sdk.version>
+        <caad-secure.version>1.0.0</caad-secure.version>
+        <!--shiro权限-->
+        <shiro.version>1.2.4</shiro.version>
+        <commons-logging.version>1.1.3</commons-logging.version>
+        <commons-beanutils.version>1.8.3</commons-beanutils.version>
+        <cas-client-core.version>3.4.1</cas-client-core.version>
+        <maven-compiler-plugin.version>2.3.1</maven-compiler-plugin.version>
+        <maven-resources-plugin.version>2.4.3</maven-resources-plugin.version>
+        <maven-plugin-plugin.version>2.4.3</maven-plugin-plugin.version>
+        <maven-jar-plugin.version>2.3.1</maven-jar-plugin.version>
+
+    </properties>
+
+    <!-- 设置本地Central Repositories begin -->
+    <repositories>
+        <repository>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <id>Public Repositories</id>
+            <name>Public Repositories</name>
+            <url>http://172.16.2.106:8081/nexus/content/groups/public/</url>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>Public Repositories</id>
+            <name>Public Repositories</name>
+            <url>http://172.16.2.106:8081/nexus/content/groups/public/</url>
+        </pluginRepository>
+    </pluginRepositories>
+    <!-- 设置本地Central Repositories end -->
+    <dependencyManagement>
+        <dependencies>
+            <!-- spring核心包 -->
+            <!-- springframe start -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-core</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-web</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-oxm</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-tx</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-jdbc</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-webmvc</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context-support</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-aop</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-test</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-beans</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <!-- springframe end -->
+
+            <!-- hibernate -->
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-entitymanager</artifactId>
+                <version>${hibernate.version}</version>
+            </dependency>
+            <!-- JSR303 BeanValidator -->
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-validator</artifactId>
+                <version>${hibernate-validator.version}</version>
+            </dependency>
+
+            <!-- 阿里巴巴数据源 包 -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid</artifactId>
+                <version>${druid.version}</version>
+            </dependency>
+
+            <!-- JDBC driver -->
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql-connector-java.version}</version>
+            </dependency>
+
+            <!-- mybatis核心包 -->
+            <dependency>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis</artifactId>
+                <version>${mybatis.version}</version>
+            </dependency>
+            <!-- mybatis/spring包 -->
+            <dependency>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis-spring</artifactId>
+                <version>${mybatis-spring.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>net.sourceforge.jtds</groupId>
+                <artifactId>jtds</artifactId>
+                <version>${jtds.version}</version>
+            </dependency>
+
+            <!-- junit测试包 -->
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <!-- json数据 -->
+            <dependency>
+                <groupId>org.codehaus.jackson</groupId>
+                <artifactId>jackson-mapper-asl</artifactId>
+                <version>${jackson-mapper-asl.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.module</groupId>
+                <artifactId>jackson-module-jaxb-annotations</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+
+            <!-- 日志文件管理包 -->
+            <!-- log begin -->
+            <dependency>
+                <groupId>log4j</groupId>
+                <artifactId>log4j</artifactId>   <!-- 日志文件管理包 -->
+                <version>${log4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-log4j12</artifactId>
+                <version>${slf4j-log4j12.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging</artifactId>
+                <version>${commons-logging.version}</version>
+            </dependency>
+            <!-- log end -->
+
+            <!-- 添加Servlet -->
+            <dependency>
+                <groupId>com.cloudhopper.proxool</groupId>
+                <artifactId>proxool</artifactId>
+                <version>${proxool.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.cloudhopper.proxool</groupId>
+                <artifactId>proxool-cglib</artifactId>
+                <version>${proxool.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest-core</artifactId>
+                <version>${hamcrest-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>servlet-api</artifactId>
+                <version>${servlet-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.thoughtworks.xstream</groupId>
+                <artifactId>xstream</artifactId>
+                <version>${xstream.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.data</groupId>
+                <artifactId>spring-data-redis</artifactId>
+                <version>${spring-data-redis.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons-lang3.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-pool2</artifactId>
+                <version>${commons-pool2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>${commons-codec.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.json</groupId>
+                <artifactId>json</artifactId>
+                <version>${json.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>jstl</artifactId>
+                <version>${jstl.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>taglibs</groupId>
+                <artifactId>standard</artifactId>
+                <version>${standard.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>${httpclient.version}</version>
+            </dependency>
+
+            <!-- httpclient begin -->
+            <dependency>
+                <groupId>commons-httpclient</groupId>
+                <artifactId>commons-httpclient</artifactId>
+                <version>${commons-httpclient.version}</version>
+            </dependency>
+            <!-- httpclient end -->
+            <dependency>
+                <groupId>commons-lang</groupId>
+                <artifactId>commons-lang</artifactId>
+                <version>${commons-lang.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-collections</groupId>
+                <artifactId>commons-collections</artifactId>
+                <version>${commons-collections.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.sf.json-lib</groupId>
+                <artifactId>json-lib</artifactId>
+                <version>${json-lib.version}</version>
+                <classifier>jdk15</classifier>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>${fastjson.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>redis.clients</groupId>
+                <artifactId>jedis</artifactId>
+                <version>${jedis.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>dom4j</groupId>
+                <artifactId>dom4j</artifactId>
+                <version>${dom4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>servlet-api</artifactId>
+                <version>${servlet-api.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <!-- spring data jpa -->
+            <dependency>
+                <groupId>org.springframework.data</groupId>
+                <artifactId>spring-data-jpa</artifactId>
+                <version>${spring-data-jpa.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.caadt.cln</groupId>
+                <artifactId>cln-common</artifactId>
+                <version>${cln-common.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons-io.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.caadt.vissapi</groupId>
+                <artifactId>vissapi-sdk</artifactId>
+                <version>${vissapi-sdk.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.caad</groupId>
+                <artifactId>caad-secure</artifactId>
+                <version>${caad-secure.version}</version>
+            </dependency>
+            <!--shiro权限-->
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-core</artifactId>
+                <version>${shiro.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-web</artifactId>
+                <version>${shiro.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-cas</artifactId>
+                <version>${shiro.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-spring</artifactId>
+                <version>${shiro.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging</artifactId>
+                <version>${commons-logging.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils</artifactId>
+                <version>${commons-beanutils.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jasig.cas.client</groupId>
+                <artifactId>cas-client-core</artifactId>
+                <version>${cas-client-core.version}</version>
+            </dependency>
+            <!--FastDFS Client-->
+            <dependency>
+                <groupId>com.caad.fastdfs_client</groupId>
+                <artifactId>fastdfs_client</artifactId>
+                <version>${fastdfs-client.version}</version>
+            </dependency>
+            <!-- 文件上传组件 -->
+            <dependency>
+                <groupId>commons-fileupload</groupId>
+                <artifactId>commons-fileupload</artifactId>
+                <version>${commons-fileupload.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.caad.TrustPayClient</groupId>
+                <artifactId>TrustPayClient</artifactId>
+                <version>3.1.4</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+
+        <resources>
+            <resource>
+                <directory>src/main/resources/</directory>
+                <filtering>false</filtering>
+            </resource>
+            <!-- 根据部署的需要，选择个性化配置 开始 -->
+            <!-- 如果是“develop开发”环境，则个性化配置文件如下： --><!--
+            <resource>
+                <directory>src/main/resources-develop/</directory>
+                <filtering>false</filtering>
+            </resource>-->
+
+            <!-- 如果是“test测试”环境，则个性化配置文件如下： --><!--
+			<resource>
+				<directory>src/main/resources-test/</directory>
+				<filtering>false</filtering>
+			</resource> -->
+
+            <!-- 如果是“product生产”环境，则个性化配置文件如下： --><!---->
+			<resource>
+				<directory>src/main/resources-product/</directory>
+				<filtering>false</filtering>
+			</resource>
+            <!-- 根据部署的需要，选择个性化配置 结束 -->
+
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${maven-resources-plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-plugin-plugin</artifactId>
+                <version>${maven-plugin-plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>${maven-jar-plugin.version}</version>
+                <configuration></configuration>
+            </plugin>
+        </plugins>
+        <defaultGoal>clean package</defaultGoal>
+    </build>
+</project>

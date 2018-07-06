@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util" xsi:schemaLocation="http://www.springframework.org/schema/beans
+      http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+      http://www.springframework.org/schema/context
+      http://www.springframework.org/schema/context/spring-context-3.0.xsd
+      http://www.springframework.org/schema/util 
+      http://www.springframework.org/schema/util/spring-util-3.0.xsd 
+      http://www.springframework.org/schema/task 
+      http://www.springframework.org/schema/task/spring-task-3.0.xsd">
+
+
+    <!-- 扫描Service -->
+    <context:component-scan base-package="com.caad.wechat"/>
+    <!-- 加载默认设置配置文件 -->
+    <util:properties id="settings" location="classpath:config.properties"/>
+    <!-- 定时器配置 -->
+    <task:scheduled-tasks>
+        <task:scheduled ref="taskJobService" method="job" cron="0 0 12 * * ?"/>
+    </task:scheduled-tasks>
+
+    <bean id="outPropertyfiles" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="locations">
+            <list>
+                <value>classpath:httpHead.properties</value>
+            </list>
+        </property>
+    </bean>
+    <context:property-placeholder ignore-unresolvable="true" location="classpath*:/config.properties"/>
+    <bean id="httpClientTemplateToDataSso" class="com.caadt.cln.common.util.HttpUtil">
+        <property name="url" value="${app.sso.loginurl}"/>
+        <property name="method" value="${app.sso.loginurl.method}"/>
+    </bean>
+
+    <bean id="httpClientTemplateToDataConfirm" class="com.caadt.cln.common.util.HttpUtil">
+        <property name="url" value="${app.Dispacther}"/>
+        <property name="method" value="${app.Dispacther.method}"/>
+    </bean>
+
+</beans>

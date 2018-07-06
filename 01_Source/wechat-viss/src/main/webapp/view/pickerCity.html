@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>选择城市</title>
+    <link rel="stylesheet" href="../css/framework7.ios.min.css">
+    <link rel="stylesheet" href="../css/framework7.ios.colors.min.css">
+    <link rel="stylesheet" href="../css/weui/weui.css">
+    <link rel="stylesheet" href="../js/framework7-index-list/framework7.indexed-list.css">
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/my-app.css">
+    <style>
+        .item-inner {
+            color: #010101;
+            font-size: 0.9rem;
+        }
+
+        .list-index {
+            width: 30px;
+        }
+    </style>
+</head>
+<body>
+<div class="views">
+    <div class="view view-main">
+        <div class="pages">
+            <div data-page="pickerIndex" class="page no-navbar no-toolbar">
+                <div class="page-content">
+                    <div class="list-block contacts-block" id="areaList">
+
+                    </div>
+                </div>
+                <ul class="list-index"></ul>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="../js/framework7.js"></script>
+
+<script type="text/javascript" src="../js/jquery.js"></script>
+<script src="../js/store.min.js"></script>
+<script src="../js/framework7-index-list/framework7.indexed-list.js"></script>
+<script>
+    var myApp = new Framework7({
+        onAjaxStart: function () {
+            myApp.showIndicator();
+        },
+        onAjaxComplete: function () {
+            myApp.hideIndicator();
+        },
+        modalCloseByOutside: true,
+        actionsCloseByOutside: false,
+        popupCloseByOutside: false,
+        modalTitle: '提示',
+        init: false
+    });
+    var $$ = Dom7;
+    var mainView = myApp.addView('.view-main', {
+        dynamicNavbar: true,
+        domCache: true
+    });
+
+    var propertyAndCountry = store.get('propertyAndCountry');
+    myApp.onPageInit('pickerIndex', function () {
+        createAreaList(propertyAndCountry, $$.parseQuery(document.url).propertyId);
+    });
+    function createAreaList(propertyAndCountry, propertyId) {
+        var areaList = '', listHtml = '';
+        for (var i = 0; i < propertyAndCountry.length; i++) {
+            if (propertyAndCountry[i].propertyTypeId === propertyId) {
+                areaList = propertyAndCountry[i].areas;//区域list
+            }
+        }
+        //默认城市、
+        var linote = '';
+        for (var area in areaList) {
+            var liHtml = '';
+            for (var list = 0; list < areaList[area].length; list++) {
+                liHtml += '<li><div class="item-content"><div class="item-inner" onclick="pickerCity(this);"><div class="item-title" data-code="' + areaList[area][list].id + '" data-parentId="' + areaList[area][list].parentId + '">' + areaList[area][list].name + '</div></div></div></li>';
+            }
+            listHtml += '<div class="list-group" id="' + area + '"><ul><li class="list-group-title">' + area + '</li>' + liHtml + '</ul></div>';
+            linote += '<li data-index-letter="' + area + '" class=""><a href="#' + area + '" class="external" style="color:#3385ff">' + area + '</a></li>';
+        }
+        $$("#areaList").html(listHtml);
+        $$('ul.list-index').html(linote);
+    }
+
+    function changeURLArg(url, arg, arg_val) {//url参数替换Fun
+        var pattern = arg + '=([^&]*)';
+        var replaceText = arg + '=' + arg_val;
+        if (url.match(pattern)) {
+            var tmp = '/(' + arg + '=)([^&]*)/gi';
+            tmp = url.replace(eval(tmp), replaceText);
+            return tmp;
+        } else {
+            if (url.match('[\?]')) {
+                return url + '&' + replaceText;
+            } else {
+                return url + '?' + replaceText;
+            }
+        }
+        return url + '\n' + arg + '\n' + arg_val;
+    }
+    function pickerCity(e) {
+        var picker = $$(e).find('.item-title');
+        if ($$.parseQuery(document.referrer).param) {
+            var url = changeURLArg(document.referrer, 'param', picker.text() + ',' + picker.attr('data-code')+ ',' + picker.attr('data-parentId'));
+            url = changeURLArg(url, 'propertyId', $$.parseQuery(document.url).propertyId);
+            window.location.href = url;
+        }
+        else {
+            window.location.href = document.referrer + '?param=' + picker.text() + ',' + picker.attr('data-code')+ ',' + picker.attr('data-parentId') + '&propertyId=' + $$.parseQuery(document.url).propertyId;
+        }
+    }
+    myApp.init();
+</script>
+</body>
+</html>

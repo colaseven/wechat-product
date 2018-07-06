@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>快捷回价</title>
+    <link rel="stylesheet" href="../css/framework7.ios.min.css">
+    <link rel="stylesheet" href="../css/framework7.ios.colors.min.css">
+    <link rel="stylesheet" href="../css/weui/weui.css">
+    <link rel="stylesheet" href="../css/my-app.css">
+    <link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+<div class="views">
+    <div class="view view-main">
+        <div class="pages no-navbar">
+            <div data-page="appraisalResult" class="page">
+                <div class="page-content">
+                    <div class="weui-msg">
+                        <div class="weui-msg__icon-area" style="margin-top: 20%;">
+                            <i class="weui-icon-success weui-icon_msg"></i>
+                        </div>
+                        <div class="weui-msg__text-area">
+                            <h2 class="weui-msg__title">提交成功</h2>
+                            <p class="weui-msg__desc">请等待估价师回价</p>
+                        </div>
+                        <div class="weui-msg__opr-area">
+                            <p class="weui-btn-area"><a href="/view/operatingRecord.html?type=16941" class="btn_default bg-white external">快捷回价记录</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="../js/framework7.js"></script>
+<script type="text/javascript">
+    var myApp = new Framework7({
+        onAjaxStart: function () {
+            myApp.showIndicator();
+        },
+        onAjaxComplete: function () {
+            myApp.hideIndicator();
+        },
+        modalTitle: '提示',
+        init: false
+    });
+    var $$ = Dom7;
+    myApp.init();
+</script>
+</body>
+</html>

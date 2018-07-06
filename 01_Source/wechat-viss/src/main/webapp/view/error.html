@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>V估价微信版</title>
+    <link rel="stylesheet" href="../css/framework7.ios.min.css">
+    <link rel="stylesheet" href="../css/framework7.ios.colors.min.css">
+    <link rel="stylesheet" href="../css/weui/weui.css">
+    <link rel="stylesheet" href="../css/my-app.css">
+    <link rel="stylesheet" href="../css/main.css">
+    <style>
+        .img-responsive {
+            width: 60% !important;
+        }
+    </style>
+</head>
+<body>
+<div class="views">
+    <div class="view view-main">
+        <div class="pages no-navbar">
+            <div data-page="appraisalResult" class="page">
+                <div class="page-content">
+                    <div class="weui-msg">
+                        <div class="weui-msg__icon-area" style="margin-top: 20%;">
+                            <img class="img-responsive" src="../images/xiaov.png"/>
+                            <img class="img-responsive" src="../images/error.png"/>
+                        </div>
+                        <div class="weui-msg__opr-area">
+                            <p class="weui-btn-area"><a href="/home/init.do" class="btn_default bg-white external">返回首页</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="../js/framework7.js"></script>
+<script type="text/javascript">
+    var myApp = new Framework7({
+        onAjaxStart: function () {
+            myApp.showIndicator();
+        },
+        onAjaxComplete: function () {
+            myApp.hideIndicator();
+        },
+        modalTitle: '提示',
+        init: false
+    });
+    var $$ = Dom7;
+    myApp.init();
+</script>
+</body>
+</html>

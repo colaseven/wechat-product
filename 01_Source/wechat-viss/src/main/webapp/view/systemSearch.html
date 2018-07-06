@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>V估价微信版</title>
+    <link rel="stylesheet" href="../css/framework7.ios.min.css">
+    <link rel="stylesheet" href="../css/framework7.ios.colors.min.css">
+    <link rel="stylesheet" href="../css/weui/weui.css">
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/my-app.css">
+    <style>
+        .icon_project, .icon_building, .icon_house {
+            margin-right: 5px;
+            transform: scale(0.7);
+            /*-ms-transform: scale(0.7);*/
+            -webkit-transform: scale(0.7);
+            /* -o-transform: scale(0.7);
+             -moz-transform: scale(0.7);*/
+            color: #fff;
+        }
+
+        .item-inner {
+            color: #010101;
+            font-size: 0.9rem;
+            margin: 4px;
+        }
+    </style>
+</head>
+<body>
+<div class="views">
+    <div class="view view-main">
+        <div class="pages">
+            <div data-page="search" class="page no-navbar no-toolbar">
+                <form class="searchbar searchbar-init">
+                    <div class="searchbar-input">
+                        <input style="background-position: 98% center" id="goSearch" type="search" placeholder="请输入地址..."><a style="position: absolute;right: 0;height: 100%;top: 0;width: 35px;opacity: 0;" id="searchByAddress"></a>
+                    </div>
+                </form>
+                <div class="searchbar-overlay"></div>
+                <div class="page-content">
+                    <div class="list-block list-block-search" style="margin: 0;">
+                        <ul id="addressList"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="../js/framework7.js"></script>
+<script>
+    var myApp = new Framework7({
+        modalCloseByOutside: true,
+        actionsCloseByOutside: false,
+        popupCloseByOutside: false,
+        onAjaxStart: function () {
+            myApp.showIndicator();
+        },
+        onAjaxComplete: function () {
+            myApp.hideIndicator();
+        },
+        modalTitle: '提示',
+        init: false
+    });
+
+    var $$ = Dom7;
+
+    var mainView = myApp.addView('.view-main', {
+        dynamicNavbar: true,
+        domCache: true
+    });
+    myApp.onPageInit('search', function () {//询价地址页面
+        $$('#addressList').html('');
+        var param = $$.parseQuery(document.url).param.split(',');
+        var address=decodeURIComponent(param[0]);
+        $$('#goSearch').val(address);
+        getUserCount(address, param[1], param[2]);
+        $$('#searchByAddress').click(function () {
+            if ($$('#goSearch').val() !== '') {
+                getUserCount($$('#goSearch').val(), param[1], param[2], false)
+            }
+        });
+    });
+    function getUserCount(name, propertyTypeCode, regionCode, isRouter) {
+        $$.ajax({
+            url: '/system/search.do',
+            dataType: 'json',
+            method: 'get',
+            data: {name: name, propertyTypeCode: propertyTypeCode, regionCode: regionCode},
+            beforeSend: function () {
+                myApp.showIndicator();
+            },
+            complete: function () {
+                myApp.hideIndicator();
+            },
+            success: function (data) {
+                if (data !== null && data.length > 0) {
+                    var temple = '', iconClass = '';
+                    for (var i = 0; i < data.length; i++) {
+                        switch (data[i].level) {
+                            case 'Project':
+                                iconClass = 'icon_project';
+                                break;
+                            case 'Building':
+                                iconClass = 'icon_building';
+                                break;
+                            case 'Households':
+                                iconClass = 'icon_house';
+                                break;
+                        }
+                        temple += '<li class="item-content"><div class="item-inner" onclick="pickerAddress(this)" data-arr="' + data[i].id + '||' + data[i].propertyTypeTwo + '||' + encodeURIComponent(data[i].address) + '||' + data[i].level + '||' + regionCode + '"><div class="item-title"><i class="' + iconClass + '"></i>' + data[i].address + '</div></div></li>';
+                    }
+                    if (isRouter) {
+                        mainView.router.load({
+                            url: '/view/systemSearch.html?param=' + name + '||' + propertyTypeCode + '||' + regionCode,
+                            context: temple
+                        })
+                    } else {
+                        $$('#addressList').html(temple);
+                    }
+                }
+                else {
+                    myApp.alert('未能匹配到当前地址！');
+                }
+            }, error: function () {
+                window.location.href = "/view/error.html";
+            }
+        });
+    }
+    function pickerAddress(e) {
+        window.location.href = '/view/systemService.html?param=' + $$(e).attr('data-arr');
+    }
+    myApp.init();
+</script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+{
+    "status": "SUCCESS",
+    "message": "连接成功",
+    "resultList": [
+        {
+            "amounts": "200",
+            "errCode": "0",
+            "errMsg": "发放成功.",
+            "loginName": "oZaIpxNHCp-_Tbs3mA88PB6oRRn8",
+            "returnCode": "SUCCESS",
+            "returnMsg": "发放成功.",
+            "sendTime": "2016-08-03 15:37:41",
+            "status": "SENT",
+            "settlementId": "123456",
+            "tipId": "1356018702201606217241207718"
+        },
+        {
+            "amounts": "200",
+            "errCode": "268458547",
+            "errMsg": "发放失败，此请求可能存在风险，已被微信拦截",
+            "loginName": "oZaIpxNHCp-_Tbs3mA88PB6oRRn8",
+            "returnCode": "FAIL",
+            "returnMsg": "发放失败，此请求可能存在风险，已被微信拦截",
+            "sendTime": "2016-08-03 15:37:42",
+            "status": "SENT",
+            "settlementId": "123456",
+            "tipId": "1356018702201606217241207719"
+        }
+    ]
+}

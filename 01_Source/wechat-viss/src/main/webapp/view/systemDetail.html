@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>系统询价详情</title>
+    <link rel="stylesheet" href="../css/framework7.ios.min.css">
+    <link rel="stylesheet" href="../css/framework7.ios.colors.min.css">
+    <link rel="stylesheet" href="../js/lightbox/jquery.lightbox.css">
+    <link rel="stylesheet" href="../css/weui/weui.css">
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/my-app.css">
+    <style>
+        .detail_body {
+            border-radius: 0;
+        }
+        .item-title, .list-block input[type=text], .list-block input[type=number], .item-after, .item-input select {
+            color: #010101;
+            font-size: 0.9rem;
+        }
+
+    </style>
+</head>
+<body>
+<div class="views">
+    <div class="view view-main">
+        <div class="pages no-navbar no-toolbar">
+            <div data-page="getSystemDetail" class="page">
+                <div id="showTab"></div>
+                <div class="page-content">
+                    <div class="tabs ">
+                        <div id="tab1" class="tab active">
+                            <div class="tab_cnt_item jgpg" style="padding-top: 40px;">
+                                <div id="detail"></div>
+                                <div class="common_line_box" id="baseInfo">
+                                </div>
+                                <div id="toInquiry"></div>
+                                <div class="empty_tips" id="residueCount"></div>
+                            </div>
+                        </div>
+                        <div id="tab2" class="tab">
+                            <div class="list-block" style="margin: 0;padding-top:40px">
+                                <ul id="projectList">
+                                </ul>
+                            </div>
+                        </div>
+                        <div id="tab3" class="tab">
+                            <div class="content-block" id="imgContent" style="padding-top:20px">
+                                <div class="item-content">
+                                    <div class="item-inner" style="text-align: center;margin-bottom:15px;">
+                                        <i class="iconfont"></i> <span id='projectName'></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="../js/framework7.js"></script>
+<script type="text/javascript" src="../js/jquery-1.7.2.js"></script>
+<script src="../js/lightbox/jquery.lightbox.min.js"></script>
+<script src="../js/store.min.js"></script>
+<script type="text/javascript">
+    var myApp = new Framework7({
+        onAjaxStart: function () {
+            myApp.showIndicator();
+        },
+        onAjaxComplete: function () {
+            myApp.hideIndicator();
+        },
+        modalCloseByOutside: true,
+        actionsCloseByOutside: false,
+        popupCloseByOutside: false,
+        modalTitle: '提示',
+        init: false
+    });
+    var $$ = Dom7;
+    myApp.onPageInit('getSystemDetail', function () {
+        getSystemDetail();
+        $$('#reSet').click(function () {
+            window.location.href = "/home/init.do";
+        });
+    });
+    function getSystemDetail() {
+        $$.ajax({
+            url: '/system/particulars.do',
+            dataType: 'json',
+            method: 'get',
+            data: {
+                id: $$.parseQuery(document.url).Id,
+                propertyId: $$.parseQuery(document.url).PropertyId
+            },
+            beforeSend: function () {
+                myApp.showIndicator();
+            },
+            complete: function () {
+                myApp.hideIndicator();
+            },
+            success: function (data) {
+                store.set('detailParam', {
+                    projectName: data.projectName,
+                    structureArea: data.historyPrice.structureArea,
+                    detailAddress: data.address
+                });
+                store.set('dataParam', {
+                    provinceCode: data.provinceCode,
+                    cityCode: data.regionCode,
+                    countyCode: data.countyCode,
+                    propertyId: data.propertyId
+                });
+                $$('#residueCount').html('<p style="color: red" id="systemCount">剩余询价次数为<b id="residueCount" style="font-size:1rem">' + data.historyPrice.residueCount + '</b>次</p>' +
+                    '<p>' + data.userCollocation + '</p></div>');
+
+                var tapHtml = ' <div class="tab_ctl" style="z-index: 60;">';
+                if (data.weChatResultDto.showResult === 'true') {
+                    tapHtml += ' <a href="#tab1" class="tab-link tab_ctl_item active">评估结果</a>';
+                }
+                if (data.weChatResultDto.showResidentInfo === 'true') {
+                    tapHtml += '<a href="#tab2" class=" tab-link tab_ctl_item">小区信息</a>';
+                }
+                if (data.weChatResultDto.showResidentImg === 'true') {
+                    tapHtml += '<a href="#tab3" class=" tab-link tab_ctl_item">小区图片</a>';
+                }
+                tapHtml += '</div>';
+                $$('#showTab').html(tapHtml);
+                if (data.historyPrice.residueCount === -1) {
+                    $$('#systemCount').hide();
+                }
+                var floor = '';
+                if (data.floor[0].length > 0) {
+                    floor = data.floor[0];
+                }
+                $$('#baseInfo').html('<div class="baseInfo"><span>&nbsp;基本信息</span> </div>' +
+                    '<div class="common_line flex_lr"><span>地址</span> ' +
+                    '<aside ></aside>' + data.address + '</div> ' +
+                    '<div class="common_line flex_lr"><span>楼栋</span> ' +
+                    '<aside></aside>' + data.unitName + ' </div> ' +
+                    '<div class="common_line flex_lr"><span>室号</span> ' +
+                    '<aside ></aside>' + data.roomName + ' </div> ' +
+                    '<div class="common_line flex_lr"><span>物业类型</span> ' +
+                    '<aside>' + data.propertyTypeName + '</aside> </div> ' +
+                    '<div class="common_line flex_lr"><span>所在楼层</span> ' +
+                    '<aside ></aside> ' + floor + '</div> ' +
+                    '<div class="common_line flex_lr"><span>建筑面积</span> ' +
+                    '<aside ></aside>' + data.historyPrice.structureArea + ' </div> ' +
+                    '<div class="common_line flex_lr"><span>主朝向</span> ' +
+                    '<aside ></aside> ' + data.historyPrice.toward + '</div> ' +
+                    '<div class="common_line flex_lr"><span>竣工年份</span> ' +
+                    '<aside ></aside>' + data.historyPrice.completionYear + ' </div>');
+
+                var detailHtml = '', noteHtml = '',
+                    total = data.historyPrice.totalPriceLowProportion === data.historyPrice.totalPriceHighProportion ? data.historyPrice.totalPriceHighProportion : data.historyPrice.totalPriceLowProportion + '-' + data.historyPrice.totalPriceHighProportion,
+                    unit = data.historyPrice.priceLowProportion === data.historyPrice.priceHighProportion ? data.historyPrice.priceHighProportion : data.historyPrice.priceLowProportion + '-' + data.historyPrice.priceHighProportion;
+                switch (data.historyPrice.priceResultType) {
+                    case 0:
+                        if (data.historyPrice.showRang) {
+                            noteHtml += '<div class="col-100" style="position:relative;background-color: #2cb7ff;height:30px;"><img src="../images/bangzhu.png" onclick="showNote(this)" data-sign="2" style="position: absolute;right:10px;top:5px;"></div>';
+                            detailHtml += '<div class="row">' + noteHtml + '<div class="col-50"><div class="colunDetail"><h4>市场评估总价(万元)</h4><h3><span>' + data.historyPrice.totalPrice + '</span></h3><h4 class="change"><span>' + data.historyPrice.unitPrice + '</span><br><h6 class="change">单价(元/㎡)</h6></h4></div></div>';
+                            detailHtml += '<div class="col-50"><div class="colunDetail"><h4 >合理价格总价区间(万元)</h4><h3><span>' + total + '</span></h3><h4 class="change"><span>' + unit + '</span><br><h6 class="change">单价(元/㎡)</h6></h4></div></div></div>';
+                        } else {
+                            noteHtml += '<div class="col-100" style="position:relative;background-color: #2cb7ff;height:30px;"><img src="../images/bangzhu.png" onclick="showNote(this)" data-sign="0" style="position: absolute;right:10px;top:5px;"></div>';
+                            detailHtml += '<div class="detail_box">' + noteHtml + '<div class="detail_body"><h4>市场评估总价(万元)</h4><h1><b>' + data.historyPrice.totalPrice + '</b><span>万元</span></h1></div><div class="detail_footer">';
+                            detailHtml += '<div class="detail_footer_item"><span>面积 (㎡)</span><b>' + data.historyPrice.structureArea + '</b></div><div class="detail_footer_item"><span>单价 (元/㎡)</span><b>' + data.historyPrice.unitPrice + '</b></div></div></div>';
+                        }
+                        break;
+                    case 2:
+                        noteHtml += '<div class="col-100" style="position:relative;background-color: #2cb7ff;height:30px;"><img src="../images/bangzhu.png" onclick="showNote(this)" data-sign="1" style="position: absolute;right:10px;top:5px;"></div>';
+                        detailHtml += '<div class="row">' + noteHtml + '<div class="col-50"><div class="colunDetail"><h4>市场评估总价(万元)</h4><h3><span>' + data.historyPrice.totalPrice + '</span></h3><h4 class="change"><span>' + data.historyPrice.unitPrice + '</span><br><h6 class="change">单价(元/㎡)</h6></h4></div></div>';
+                        detailHtml += '<div class="col-50"><div class="colunDetail"><h4>抵押评估总价(万元)</h4><h3><span>' + total + '</span></h3><h4 class="change"><span>' + unit + '</span><br><h6 class="change">单价(元/㎡)</h6></h4></div></div></div>';
+                        break;
+                    case 3:
+                        noteHtml += '<div class="col-100" style="position:relative;background-color: #2cb7ff;height:30px;"><img src="../images/bangzhu.png" onclick="showNote(this)" data-sign="3" style="position: absolute;right:10px;top:5px;"></div>';
+                        detailHtml += '<div class="detail_box">' + noteHtml + '<div class="detail_body"><h4>抵押评估总价(万元)</h4><h2><b>' + total + '</b></h2></div><div class="detail_footer">';
+                        detailHtml += '<div class="detail_footer_item"><span>单价 (元/㎡)</span><b>' + unit + '</b></div></div></div>';
+                        break;
+                }
+                $$('#detail').html(detailHtml);
+                //显示可配置产品
+                var tempalteTypes = data.historyPrice.templateTypes;
+                if (tempalteTypes.length > 0) {
+                    var productTempalte = '';
+                    for (var j = 0; j < tempalteTypes.length; j++) {
+                        switch (tempalteTypes[j].templateTypeId) {
+                            //系统询价
+                            case "1414805116300000100":
+                                break;
+                            //房地产报告
+                            case "10466":
+                                productTempalte += '<div class="btn_primary"  onclick="entrustEntrance(this)" data-templateTypeId="' + tempalteTypes[j].templateTypeId + '" data-propertyId="' + data.propertyId + '">' + tempalteTypes[j].templateTypeName + '</div>';
+                                break;
+                            //快捷回价
+                            case "10465":
+                                productTempalte += '<div class="btn_primary"  onclick="comingSoon(this)" data-templateTypeId="' + tempalteTypes[j].templateTypeId + '">' + tempalteTypes[j].templateTypeName + '</div>';
+                                break;
+                            //快捷回价
+                            case  "16941":
+                                productTempalte += '<div class="btn_primary"  onclick="quickEntrance(this)" data-templateTypeId="' + tempalteTypes[j].templateTypeId + '" data-propertyId="' + data.propertyId + '">' + tempalteTypes[j].templateTypeName + '</div>';
+                                break;
+                            //地址标准化
+                            case  "8220644737759051840":
+                                productTempalte += '<div class="btn_primary"  onclick="comingSoon(this)" data-templateTypeId="' + tempalteTypes[j].templateTypeId + '">' + tempalteTypes[j].templateTypeName + '</div>';
+                                break;
+                            default:
+                                break
+                        }
+                    }
+                    $$('#toInquiry').html(productTempalte);
+                }
+                getCommunity(data.propertyId, data.communityId);
+            }, error: function () {
+                window.location.href = "/view/error.html";
+            }
+        });
+    }
+    function showNote(e) {
+        var noteText = '';
+        switch ($$(e).attr('data-sign')) {
+            case'0':
+                noteText = '<b>市场评估价值：</b><span style="color:rgba(1, 1, 1, 0.78);">正常市场条件下的客观市场价值。</span>';
+                break;
+            case'1':
+                noteText = '<b>市场评估价值：</b><span style="color:rgba(1, 1, 1, 0.78);">正常市场条件下的客观市场价值。</span><br><b>抵押评估价值：</b><span style="color:rgba(1, 1, 1, 0.78);">是指估价机构出具的，为金融机构确认的房地产抵押贷款额度而提供的价值参考依据。</span>';
+                break;
+            case'2':
+                noteText = '<b>市场评估价值：</b><span style="color:rgba(1, 1, 1, 0.78);">正常市场条件下的客观市场价值。</span><br><b>合理价格区间：</b><span style="color:rgba(1, 1, 1, 0.78);">市场评估价格的合理价格范围。</span>';
+                break;
+            case'3':
+                noteText = '抵押评估价值：</b><span style="color:rgba(1, 1, 1, 0.78);">是指估价机构出具的，为金融机构确认的房地产抵押贷款额度而提供的价值参考依据。</span>';
+                break;
+        }
+        var vmodal = myApp.modal({
+            text: noteText,
+            buttons: [
+                {
+                    title: '提示',
+                    text: '我知道了！',
+                    onClick: function () {
+                        myApp.closeModal(vmodal);
+                    }
+                }
+            ]
+        })
+    }
+    function comingSoon() {
+        myApp.alert("敬请期待！")
+    }
+
+    function entrustEntrance(e) {
+        var propertyId = $$(e).attr('data-propertyId');
+        var templateTypeId = $$(e).attr('data-templateTypeId');
+        $$.ajax({
+            url: '/product/list.do',
+            dataType: 'json',
+            method: 'get',
+            data: {
+                propertyId: propertyId,
+                templateTypeId: templateTypeId
+            },
+            beforeSend: function () {
+                myApp.showIndicator();
+            },
+            complete: function () {
+                myApp.hideIndicator();
+            },
+            success: function (data) {
+                if (data.length === 1) {
+                    var productId = data[0].id;
+                    window.location.href = '/view/entrustService.html?propertyId=' + propertyId + '&productId=' + productId + "&isShift=0";
+                } else if (data.length > 1) {
+                    window.location.href = '/view/entrustProduct.html?propertyId=' + propertyId + '&templateTypeId=' + templateTypeId + "&isShift=0";
+                } else {
+                    var vmodal = myApp.modal({
+                        text: '<div>未配置产品，如有疑问请拨打电话：</br><a class="external" href="tel:' + store.get('imgTel').telephone + '">' + store.get('imgTel').telephone + '</a></div>',
+                        buttons: [
+                            {
+                                title: '提示',
+                                text: '确定',
+                                onClick: function () {
+                                    myApp.closeModal(vmodal);
+                                    myApp.hideIndicator();
+                                }
+                            }
+                        ]
+                    })
+                }
+            }, error: function () {
+                window.location.href = "/view/error.html"
+            }
+        });
+    }
+    function quickEntrance(e) {
+        var propertyId = $$(e).attr('data-propertyId');
+        var templateTypeId = $$(e).attr('data-templateTypeId');
+        $$.ajax({
+            url: '/product/list.do',
+            dataType: 'json',
+            method: 'get',
+            data: {
+                propertyId: propertyId,
+                templateTypeId: templateTypeId
+            },
+            beforeSend: function () {
+                myApp.showIndicator();
+            },
+            success: function (data) {
+                if (data.length === 1) {
+                    var productId = data[0].id;
+                    $$.ajax({
+                        url: '/home/userResidueCount.do',
+                        dataType: 'json',
+                        method: 'get',
+                        data: {
+                            productId: productId
+                        },
+                        complete: function () {
+                            myApp.hideIndicator();
+                        },
+                        success: function (data) {
+                            if (data > 0 || data === -1) {
+                                window.location.href = '/view/quickService.html?propertyId=' + propertyId + '&productId=' + productId + "&isShift=0";
+                            } else {
+                                var vmodal = myApp.modal({
+                                    text: '<div>产品次数已用完，如有疑问请拨打电话：</br><a class="external" href="tel:' + store.get('imgTel').telephone + '">' + store.get('imgTel').telephone + '</a></div>',
+                                    buttons: [
+                                        {
+                                            title: '提示',
+                                            text: '权限开通',
+                                            onClick: function () {
+                                                myApp.closeModal(vmodal);
+                                                window.location.href = "/view/purchaseList.html?propertyId=" + propertyId;
+                                            }
+                                        }
+                                    ]
+                                })
+                            }
+                        }, error: function () {
+                            window.location.href = "/view/error.html";
+                        }
+                    })
+                } else if (data.length > 1) {
+                    window.location.href = '/view/quickProduct.html?propertyId=' + propertyId + "&templateTypeId=" + templateTypeId + "&isShift=0";
+                } else {
+                    var vmodal = myApp.modal({
+                        text: '<div>未配置产品，如有疑问请拨打电话：</br><a class="external" href="tel:' + store.get('imgTel').telephone + '">' + store.get('imgTel').telephone + '</a></div>',
+                        buttons: [
+                            {
+                                title: '提示',
+                                text: '确定',
+                                onClick: function () {
+                                    myApp.closeModal(vmodal);
+                                    myApp.hideIndicator();
+                                }
+                            }
+                        ]
+                    })
+                }
+            }, error: function () {
+                window.location.href = "/view/error.html"
+            }
+        });
+    }
+
+    function getCommunity(propertyId, communityId) {
+        $$.ajax({
+            url: '/system/info.do',
+            dataType: 'json',
+            method: 'get',
+            data: {
+                propertyId: propertyId,
+                communityId: communityId
+            },
+            beforeSend: function () {
+                myApp.showIndicator();
+            },
+            complete: function () {
+                myApp.hideIndicator();
+            },
+            success: function (data) {
+                var projectList = '';
+                /*小区信息*/
+                $$.each(data.projectData.groupFeildList, function (index, value) {
+                    projectList += '<li><div class="item-content"><div class="item-inner"><div class="item-title">' + value.fieldNameCn + '</div><div class="item-after">' + value.fieldValue + '</div></div></div></li>'
+                });
+                $$('#projectList').html(projectList);
+                /*小区图片*/
+                $$('#projectName').text(data.projectName);
+                for (var i = 0; i < data.imgGroups.length; i++) {
+                    $$('#imgContent').append('<div class="card"><div class="card-header">' + data.imgGroups[i].name + '</div><div class="card-content"><div class="row img_line common_imgbox" id="' + data.imgGroups[i].name + '"></div></div></div>');
+                    $$.each(data.imgs, function (index, value) {
+                        if (value.pictureTypeName === data.imgGroups[i].name) {
+                            $$('#' + data.imgGroups[i].name).append('<a class="imgitem external lightbox" rel="' + data.imgGroups[i].name + '" href="' + value.fileUrl + '"><img class="img-responsive" src="' + value.thumbnail + '"></a>')
+                        }
+                    })
+                }
+                $('.lightbox').lightbox();
+                $$('#imgContent .card').each(function (e) {
+                    if ($$(this).find('.imgitem').length < 1) {
+                        $$(this).remove();
+                    }
+                })
+            }, error: function () {
+                window.location.href = "/view/error.html"
+            }
+        })
+    }
+    myApp.init();
+</script>
+</body>
+</html>

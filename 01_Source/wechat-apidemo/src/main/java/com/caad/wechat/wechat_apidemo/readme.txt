@@ -1,0 +1,2 @@
+com.caad.wechat.wechat_apidemo是在开发vissapi之前提供的apidemo，后被替代。
+com.caad.wechat.vissapi_sdkdemo是基于vissapi-sdk开发的程序接口。

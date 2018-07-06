@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>快捷产品</title>
+    <link rel="stylesheet" href="../css/framework7.ios.min.css">
+    <link rel="stylesheet" href="../css/framework7.ios.colors.min.css">
+    <link rel="stylesheet" href="../css/weui/weui.css">
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/my-app.css">
+</head>
+<body>
+<div class="views">
+    <div class="view view-main">
+        <div class="pages">
+            <div data-page="getProduct" class="page no-navbar no-toolbar">
+                <div class="page-content infinite-scroll">
+                    <div class="card row" id="productList">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="../js/framework7.js"></script>
+<script type="text/javascript" src="../js/jquery.js"></script>
+<script type="text/javascript" src="../js/store.min.js"></script>
+<script type="text/javascript">
+    var myApp = new Framework7({
+        onAjaxStart: function () {
+            myApp.showIndicator();
+        },
+        onAjaxComplete: function () {
+            myApp.hideIndicator();
+        },
+        modalCloseByOutside: true,
+        actionsCloseByOutside: false,
+        popupCloseByOutside: false,
+        modalTitle: '提示',
+        init: false
+    });
+    var $$ = Dom7;
+    var mainView = myApp.addView('.view-main', {
+        dynamicNavbar: true,
+        domCache: true
+    });
+    var propertyId = $$.parseUrlQuery(document.url).propertyId;
+    var templateTypeId = $$.parseUrlQuery(document.url).templateTypeId;
+    var province = $$.parseUrlQuery(document.url).province;
+    var city = $$.parseUrlQuery(document.url).city;
+
+    myApp.onPageInit('getProduct', function () {
+        /*快捷回价*/
+        /*获取产品列表*/
+        $$.ajax({
+            url: '/product/list.do',
+            dataType: 'json',
+            method: 'get',
+            data: {
+                propertyId: propertyId,
+                templateTypeId: templateTypeId
+            },
+            beforeSend: function () {
+                myApp.showIndicator();
+            },
+            complete: function () {
+                myApp.hideIndicator();
+            },
+            success: function (data) {
+                var template = '';
+                if (data !== null && data.length > 0) {
+                    $$.each(data, function (index, val) {
+                        if (val.count === -1) {
+                            template += '<div class="card-content col-100"><div class="btn_primary" onclick="pickerProduct(this)" data-productId="' + val.id + '" data-propertyId="' + val.propertyId + '">' + val.outName + '</div></div>';
+                        } else {
+                            template += '<div class="card-content col-100"><div class="btn_primary" onclick="pickerProduct(this)" data-productId="' + val.id + '" data-propertyId="' + val.propertyId + '">' + val.outName + '<h5>（剩余次数：' + val.count + '）</h5></div></div>';
+                        }
+                    })
+                } else {
+                    template += '<div class="card-content col-100"><div class="btn_primary">未获取到授权产品，如有疑问请拨打电话：<a  class="external" href="tel:' + store.get('imgTel').telephone + '">' + store.get('imgTel').telephone + '</a></div></div>';
+                }
+                $$('#productList').html(template);
+            }, error: function () {
+                window.location.href = "/view/error.html"
+            }
+        });
+
+    });
+    myApp.init();
+    function pickerProduct(e) {
+        var ele = $$(e);
+        $$.ajax({
+            url: '/home/userResidueCount.do',
+            dataType: 'json',
+            method: 'get',
+            data: {
+                productId: $$(e).attr('data-productId')
+            },
+            beforeSend: function () {
+                myApp.showIndicator();
+            },
+            complete: function () {
+                myApp.hideIndicator();
+            },
+            success: function (data) {
+                if (data > 0 || data === -1) {
+                    if ($$.parseQuery(document.url).isShift === '0') {
+                        window.location.href = '/view/quickService.html?propertyId=' + ele.attr('data-propertyId') + '&productId=' + ele.attr('data-productId') + '&isShift=0';
+                    } else {
+                        window.location.href = '/view/quickService.html?propertyId=' + ele.attr('data-propertyId') + '&productId=' + ele.attr('data-productId') + '&province=' + province + '&city=' + city;
+                    }
+                } else {
+                    var vmodal = myApp.modal({
+                        title: '提示',
+                        text: '<div>您的免费次数已用完，如有疑问请拨打电话：</br><a class="external" href="tel:' + store.get('imgTel').telephone + '">' + store.get('imgTel').telephone + '</a></div>',
+                        buttons: [
+                            {
+                                text: '权限开通',
+                                onClick: function () {
+                                    myApp.closeModal(vmodal);
+                                    window.location.href = "/view/purchaseList.html?propertyId=" + ele.attr('data-propertyId');
+                                }
+                            }
+                        ]
+                    })
+                }
+            }, error: function () {
+                window.location.href = "/view/error.html";
+            }
+        })
+    }
+</script>
+</body>
+</html>

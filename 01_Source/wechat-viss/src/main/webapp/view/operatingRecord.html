@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>操作记录</title>
+    <link rel="stylesheet" href="../css/framework7.ios.min.css">
+    <link rel="stylesheet" href="../css/framework7.ios.colors.min.css">
+    <link rel="stylesheet" href="../css/weui/weui.css">
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/my-app.css">
+    <style>
+        .tab_ctl {
+            position: relative;
+        }
+
+        .tab_ctl .tab_ctl_item {
+            font-size: 0.9rem;
+        }
+
+        .infinite-scroll-preloader {
+            margin-top: -20px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .infinite-scroll-preloader .preloader {
+            width: 34px;
+            height: 34px;
+        }
+
+        .content-block {
+            padding: 0 8px;
+            margin: 10px 0 60px 0;
+        }
+
+    </style>
+</head>
+<body>
+<div class="views">
+    <div class="view view-main">
+        <div class="pages no-navbar">
+            <div data-page="history" class="page">
+                <div class="tab_ctl" id="tabCtr">
+                </div>
+                <form class="searchbar searchbar-init" style="position: fixed;top: 45px">
+                    <div class="searchbar-input">
+                        <input style="background-position: 98% center" type="search" placeholder="请输入项目名称或物业地址进行搜索"><a style="position: absolute;right: 0;height: 100%;top: 0;width: 35px;opacity: 0;" id="addressSure">确定</a>
+                    </div>
+                </form>
+                <div class="page-content infinite-scroll" style="background: rgba(240,240,240,1);">
+                    <div class="content-block">
+                        <div class="tab_cnt_item infinite_system">
+                        </div>
+                        <span class="empty_tips"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="../js/framework7.js"></script>
+<script type="text/javascript">
+    var myApp = new Framework7({
+        onAjaxStart: function () {
+            myApp.showIndicator();
+        },
+        onAjaxComplete: function () {
+            myApp.hideIndicator();
+        },
+        modalCloseByOutside: true,
+        actionsCloseByOutside: false,
+        popupCloseByOutside: false,
+        modalTitle: '提示',
+        init: false
+    });
+    var $$ = Dom7;
+    var pageSize = 4,//快捷回价
+        personaPage = 1,
+        allPersonItesms,
+        loadingPerson = false;
+    myApp.onPageInit('history', function () {
+        /*初始化*/
+        getSystemHistory(false);
+    });
+    function getAllHistory(tempId, name) {
+        var searchType = '';
+        switch (tempId) {
+            case '10466'://估价报告
+                searchType = 'entrust';
+                break;
+            case '10465'://人工询价单
+                break;
+            case '16941'://快捷回价
+                searchType = 'quick';
+                break;
+            case '8220644737759051840'://地址标准化
+                break;
+            case '1414805116300000100'://系统询价
+                searchType = 'system';
+                break;
+        }
+        if (searchType !== '') {
+            $$.ajax({
+                url: '/' + searchType + '/history.do',
+                dataType: 'json',
+                method: 'get',
+                data: {
+                    templateTypeId: tempId,
+                    pageIndex: personaPage,
+                    pageSize: pageSize,
+                    search: name
+                },
+                beforeSend: function () {
+                    myApp.showIndicator();
+                },
+                complete: function () {
+                    myApp.hideIndicator();
+                },
+                success: function (data) {
+                    allPersonItesms = data.totalItemCount;
+                    personaPage++;
+                    $$('.infinite_system').append(createHtml(tempId, data));
+                    if ($$('.infinite_system a.seek_box').length >= allPersonItesms) {
+                        $$('.empty_tips').text('已全部加载');
+                    }
+                    else {
+                        $$('.empty_tips').text('下拉加载更多');
+                    }
+                }
+            })
+        } else {
+            myApp.alert("搜索失败！")
+        }
+    }
+    function createHtml(Id, temData) {
+        var data = temData, personHtml = '';
+        switch (Id) {
+            case '16941'://快捷回价
+                for (var i = 0; i < data.items.length; i++) {
+                    var innerHtml = '';
+                    switch (data.items[i].className) {
+                        case 'sealingalloting':
+                        case 'sealed':
+                        case 'sealing':
+                        case 'check':
+                        case 'checking':
+                        case 'complete':
+                            innerHtml += '<span>已回价</span>';
+                            break;
+                        case 'overdue':
+                            innerHtml += '<span>询价单已超时</span>';
+                            break;
+                        case 'unassess':
+                            innerHtml += '<span>无法回价</span>';
+                            break;
+                        case 'supplementing':
+                            innerHtml += '<span>补充资料</span>';
+                            break;
+                        case 'rejected':
+                            innerHtml += '<span>已撤销</span>';
+                            break;
+                        case 'toSurvey':
+                        case 'alloting':
+                        case 'assessment':
+                        case 'surveying':
+                        default:
+                            innerHtml += '<span>等待回价</span>';
+                            break;
+                    }
+                    personHtml += '<a href="/view/quickDetail.html?id=' + data.items[i].id + '" class="seek_box external"><div class="seek_body"><div class="seek_title flex_lr"><h2>' + data.items[i].projectName + '</h2>';
+                    personHtml += innerHtml;
+                    personHtml += '</div><p><i class="iconfont"></i> <span>' + data.items[i].detailAddress + '</span></p><p>面积：<span>' + data.items[i].floorAcreage + '</span>(㎡)</br>询价时间：<span>' + data.items[i].createTime + '</span></p></div>';
+                    personHtml += '<div class="seek_bottom"><div class="seek_price"><i class="iconfont text-warning"></i><span>单价(元)</span><b class="f5">' + data.items[i].assessSinglePrice + '</b></div>';
+                    personHtml += '<div class="seek_price"><i class="iconfont text-primary"></i><span>总价(万元)</span><b class="f5">' + data.items[i].assessTotalPrice + '</b></div></div></a>';
+                }
+                break;
+            case '1414805116300000100'://系统询价
+                for (var i = 0; i < data.items.length; i++) {
+                    personHtml += '<a href="/view/systemDetail.html?Id=' + data.items[i].id + '&PropertyId=' + data.items[i].propertyID + '" class="seek_box external"><div class="seek_body">';
+                    personHtml += '<div class="seek_title flex_lr"><h2>' + data.items[i].projectName + '</h2> <span>系统询价（' + data.items[i].propertyName + '）</span></div> <p><i class="iconfont"></i> <span>' + data.items[i].detailAddress + '</span></p>';
+                    personHtml += '<p>面积：<span>' + data.items[i].floorAcreage + '</span>(㎡)</br>询价时间：<span>' + data.items[i].createTimeStr + '</span></p></div> <div class="seek_bottom"><div class="seek_price"><i class="iconfont text-warning"></i> <span>单价(元)</span><b class="f5">' + data.items[i].assessSinglePrice + '</b>';
+                    personHtml += '</div><div class="seek_price"><i class="iconfont text-primary"></i> <span>总价(万元)</span> <b class="f5">' + data.items[i].assessTotalPrice + '</b></div></div></a>';
+                }
+                break;
+            case '10466'://委托报告
+                for (var i = 0; i < data.items.length; i++) {
+                    var singlePrice = data.items[i].assessSinglePrice;
+                    var totalPrice = data.items[i].assessTotalPrice;
+                    if (singlePrice === null || singlePrice === '0') {
+                        singlePrice = '*****';
+                        totalPrice = '*****';
+                    }
+                    var innerHtml = '';
+                    if (data.items[i].noChargeCount === '0' || data.items[i].noChargeCount === null) {
+                        switch (data.items[i].className) {
+                            case 'sealingalloting':
+                            case 'sealed':
+                            case 'sealing':
+                            case 'check':
+                            case 'checking':
+                            case 'complete':
+                                innerHtml += '<span>已回价</span>';
+                                break;
+                            case 'overdue':
+                                innerHtml += '<span>询价单已超时</span>';
+                                break;
+                            case 'unassess':
+                                innerHtml += '<span>无法回价</span>';
+                                break;
+                            case 'supplementing':
+                                innerHtml += '<span>补充资料</span>';
+                                break;
+                            case 'rejected':
+                                innerHtml += '<span>已撤销</span>';
+                                break;
+                            case 'toSurvey':
+                            case 'alloting':
+                            case 'assessment':
+                            case 'surveying':
+                            default:
+                                innerHtml += '<span>等待回价</span>';
+                                break;
+                        }
+                    } else {
+                        if (data.items[i].className === 'overdue') {
+                            innerHtml += '<span>询价单已超时</span>';
+                        } else if (data.items[i].className === 'unassess') {
+                            innerHtml += '<span>无法回价</span>';
+                        } else if (data.items[i].className === 'complete') {
+                            innerHtml += '<span>已回价</span>';
+                        } else if (data.items[i].className === 'supplementing') {
+                            innerHtml += '<span>补充资料</span>';
+                        } else if (data.items[i].className === 'rejected') {
+                            innerHtml += '<span>已撤销</span>';
+                        } else {
+                            innerHtml += '<span>待支付</span>';
+                        }
+                    }
+                    personHtml += '<a href="/view/entrustDetail.html?id=' + data.items[i].id + '" class="seek_box external"><div class="seek_body"><div class="seek_title flex_lr"><h2>' + data.items[i].detailAddress + '</h2>';
+                    personHtml += innerHtml;
+                    personHtml += '</div><p>面积：<span>' + data.items[i].floorAcreage + '</span>(㎡)</br>询价时间：<span>' + data.items[i].createTime + '</span></p></div>';
+                    personHtml += '<div class="seek_bottom"><div class="seek_price"><i class="iconfont text-warning"></i><span>单价(元)</span><b class="f5">' + singlePrice + '</b></div>';
+                    personHtml += '<div class="seek_price"><i class="iconfont text-primary"></i><span>总价(万元)</span><b class="f5">' + totalPrice + '</b></div></div></a>';
+                }
+        }
+        return personHtml;
+    }
+    function getSystemHistory(isLoad) {
+        $$.ajax({
+            url: '/system/history.do',
+            dataType: 'json',
+            method: 'get',
+            data: {
+                pageIndex: 1,
+                pageSize: pageSize
+            },
+            beforeSend: function () {
+                myApp.showIndicator();
+            },
+            success: function (data) {
+                if (isLoad) {
+                    allsystemItesms = data.totalItemCount;
+                    systemPage++;
+                    var systemHtml = '';
+                    for (var i = 0; i < data.items.length; i++) {
+                        systemHtml += '<a href="/view/systemDetail.html?Id=' + data.items[i].id + '&PropertyId=' + data.items[i].propertyID + '" class="seek_box external"><div class="seek_body">';
+                        systemHtml += '<div class="seek_title flex_lr"><h2>' + data.items[i].projectName + '</h2> <span>系统询价</span></div> <p><i class="iconfont"></i> <span>' + data.items[i].detailAddress + '</span></p>';
+                        systemHtml += '<p>面积：<span>' + data.items[i].floorAcreage + '</span>(㎡)</br>询价时间：<span>' + data.items[i].createTime + '</span></p></div> <div class="seek_bottom"><div class="seek_price"><i class="iconfont text-warning"></i> <span>单价(元)</span><b class="f5">' + data.items[i].assessSinglePrice + '</b>';
+                        systemHtml += '</div><div class="seek_price"><i class="iconfont text-primary"></i> <span>总价(万元)</span> <b class="f5">' + data.items[i].assessTotalPrice + '</b></div></div></a>';
+                    }
+                    $$('.infinite_system').append(systemHtml);
+                    if ($$('.infinite_system a.seek_box').length >= allPersonItesms) {
+                        $$('#tab1 .empty_tips').text('已全部加载');
+                    }
+                    else {
+                        $$('#tab1 .empty_tips').text('下拉加载更多');
+                    }
+                } else {//首次获取tab
+                    var tabList = '';
+                    for (var i = 0; i < data.templateTypes.length; i++) {
+                        tabList += '<a href="#" class="tab-link tab_ctl_item" onclick="changeTab(this)" data-id="' + data.templateTypes[i].templateTypeId + '">' + data.templateTypes[i].templateTypeName + '</a>'
+                    }
+                    $$('#tabCtr').html(tabList);
+                    var tabType = $$.parseUrlQuery(document.url).type;
+                    tabType = !tabType ? '1414805116300000100' : tabType;
+                    switch (tabType) {
+                        case '10466'://估价报告
+                            $$('[data-id="10466"]').addClass('active');
+                            getAllHistory('10466', '');
+                            break;
+                        case '10465'://人工询价单
+                            $$('[data-id="10465"]').addClass('active');
+                            getAllHistory('10465', '');
+                            break;
+                        case '16941'://快捷回价
+                            $$('[data-id="16941"]').addClass('active');
+                            getAllHistory('16941', '');
+                            break;
+                        case '8220644737759051840'://地址标准化
+                            break;
+                        case '1414805116300000100':
+                            $$('[data-id="1414805116300000100"]').addClass('active');
+                            getAllHistory('1414805116300000100', '');
+                            break;
+                    }
+                }
+
+            }, error: function () {
+                window.location.href = "/view/error.html"
+            }
+        })
+    }
+    function changeTab(e) {//更改列表
+        $$('.infinite_system').html('');
+        $$('#addressSure').prev().val('');
+        personaPage = 1;
+        $$('#tabCtr a').removeClass('active');
+        $$(e).addClass('active');
+        if ($$(e).attr('data-id') === '16941' || $$(e).attr('data-id') === '1414805116300000100' || $$(e).attr('data-id') === '10466') {
+            $$('.infinite-scroll').trigger('infinite');
+        } else {
+            $$('.empty_tips').text('暂无数据');
+            myApp.alert("敬请期待！");
+        }
+
+    }
+    $$('.infinite-scroll').on('infinite', function () {
+        if (loadingPerson) return;
+        loadingPerson = true;
+        setTimeout(function () {
+            loadingPerson = false;
+            getAllHistory($$('.tab_ctl_item.active').attr('data-id'), $$('#addressSure').prev().val());
+
+        }, 500);
+    });
+    $$('#addressSure').click(function () {
+        $$('.infinite_system').html('');
+        personaPage = 1;
+        getAllHistory($$('.tab_ctl_item.active').attr('data-id'), $$(this).prev().val());
+    });
+    myApp.init();
+</script>
+</body>
+</html>

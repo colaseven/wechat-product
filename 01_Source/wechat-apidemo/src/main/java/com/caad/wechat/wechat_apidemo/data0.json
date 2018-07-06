@@ -1,0 +1,349 @@
+{
+	"Data": {
+		"CompanyId": 614659763810001111,
+		"CompanyName": "微估价专用（不能删除）",
+		"DefaultPropertyTypeId": "92",
+		"PropertyTypes": [{
+			"PropertyTypeId": "92",
+			"Name": "住宅",
+			"Code": "resident",
+			"DefaultAreaId": "76",
+			"Areas": {
+				"X": [{
+					"Id": "81",
+					"Name": "西安市",
+					"IsCurrent": false,
+					"SearchCodens": ["xas", "xianshi"],
+					"Children": "16228||16230||16232||16234||16236||16238||16240||16242||16244||16246||16248||16250||16252"
+				},
+				{
+					"Id": "10790",
+					"Name": "厦门市",
+					"IsCurrent": false,
+					"SearchCodens": ["xms", "xiamenshi"],
+					"Children": "13306||13308||13310||13312||13314||13316"
+				},
+				{
+					"Id": "20234",
+					"Name": "新北市",
+					"IsCurrent": false,
+					"SearchCodens": ["xbs", "xinbeishi"],
+					"Children": "20239||20240||20241"
+				}],
+				"S": [{
+					"Id": "76",
+					"Name": "上海市",
+					"IsCurrent": true,
+					"SearchCodens": ["shs", "shanghaishi"],
+					"Children": "83||85||86||87||88||89||12670||12672||12674||12676||12678||12680||12682||12684||12686||12688||12690||20202||20203"
+				},
+				{
+					"Id": "10568",
+					"Name": "石家庄市",
+					"IsCurrent": false,
+					"SearchCodens": ["sjzs", "shijiezhuangshi"],
+					"Children": "11296||11298||11300||11302||11304||11306||11308||11310||11312||11314||11316||11318||11320||11322||11324||11326||11328||11330||11332||11334||11336||11338||30527"
+				},
+				{
+					"Id": "10826",
+					"Name": "上饶市",
+					"IsCurrent": false,
+					"SearchCodens": ["srs", "shangraoshi"],
+					"Children": "13626||13628||13630||13632||13634||13636||13638||13640||13642||13644||13646||13648||30532"
+				},
+				{
+					"Id": "10952",
+					"Name": "深圳市",
+					"IsCurrent": false,
+					"SearchCodens": ["szs", "shenzhenshi"],
+					"Children": "14738||14740||14742||14744||14746||14748||30349||30350||30351||30352"
+				}],
+				"B": [{
+					"Id": "10564",
+					"Name": "北京市",
+					"IsCurrent": false,
+					"SearchCodens": ["bjs", "beijingshi"],
+					"Children": "11232||11234||11236||11238||11240||11242||11244||11246||11248||11250||11252||11254||11256||11258||11260||11262||20195"
+				}],
+				"T": [{
+					"Id": "10566",
+					"Name": "天津市",
+					"IsCurrent": false,
+					"SearchCodens": ["tjs", "tianjinshi"],
+					"Children": "11264||11266||11268||11270||11272||11274||11276||11278||11280||11282||11284||11286||11288||11290||11292||11294"
+				},
+				{
+					"Id": "10590",
+					"Name": "太原市",
+					"IsCurrent": false,
+					"SearchCodens": ["tys", "taiyuanshi"],
+					"Children": "11638||11640||11642||11644||11646||11648||11650||11652||11654||11656"
+				},
+				{
+					"Id": "10752",
+					"Name": "台州市",
+					"IsCurrent": false,
+					"SearchCodens": ["tzs", "taizhoushi"],
+					"Children": "13034||13036||13038||13040||13042||13044||13046||13048||13050"
+				},
+				{
+					"Id": "20233",
+					"Name": "台北市",
+					"IsCurrent": false,
+					"SearchCodens": ["tbs", "taibeishi"],
+					"Children": "20236||20237||20238"
+				},
+				{
+					"Id": "20235",
+					"Name": "台中市",
+					"IsCurrent": false,
+					"SearchCodens": ["tzs", "taizhongshi"],
+					"Children": "20242||20243||20244"
+				}],
+				"Q": [{
+					"Id": "10572",
+					"Name": "秦皇岛市",
+					"IsCurrent": false,
+					"SearchCodens": ["qhds", "qinhuangdaoshi"],
+					"Children": "11368||11370||11372||11374||11376||11378||11380"
+				},
+				{
+					"Id": "10830",
+					"Name": "青岛市",
+					"IsCurrent": false,
+					"SearchCodens": ["qds", "qingdaoshi"],
+					"Children": "13670||13672||13674||13676||13678||13680||13682||13684||13686||13688||30500||30501"
+				}],
+				"H": [{
+					"Id": "10574",
+					"Name": "邯郸市",
+					"IsCurrent": false,
+					"SearchCodens": ["hds", "handanshi"],
+					"Children": "11382||11384||11386||11388||11390||11392||11394||11396||11398||11400||11402||11404||11406||11408||11410||11412||11416||11418"
+				},
+				{
+					"Id": "10612",
+					"Name": "呼和浩特市",
+					"IsCurrent": false,
+					"SearchCodens": ["hhhts", "huhuohaoteshi"],
+					"Children": "11876||11878||11880||11882||11884||11886||11888||11890||11892"
+				},
+				{
+					"Id": "10734",
+					"Name": "杭州市",
+					"IsCurrent": false,
+					"SearchCodens": ["hzs", "hangzhoushi"],
+					"Children": "12890||12892||12894||12896||12898||12900||12902||12904||12906||12908||12910||12912||12914"
+				},
+				{
+					"Id": "10756",
+					"Name": "合肥市",
+					"IsCurrent": false,
+					"SearchCodens": ["hfs", "hefeishi"],
+					"Children": "13070||13072||13074||13076||13078||13080||13082||13084||13086||30514||30515||30516||30517||30518"
+				}],
+				"C": [{
+					"Id": "10584",
+					"Name": "沧州市",
+					"IsCurrent": false,
+					"SearchCodens": ["czs", "cangzhoushi"],
+					"Children": "11564||11566||11568||11570||11572||11574||11576||11578||11580||11582||11584||11586||11588||11590||11592||11594"
+				},
+				{
+					"Id": "10920",
+					"Name": "长沙市",
+					"IsCurrent": false,
+					"SearchCodens": ["css", "changshashi"],
+					"Children": "14450||14452||14454||14456||14458||14460||14462||14464||14466"
+				},
+				{
+					"Id": "11024",
+					"Name": "重庆市",
+					"IsCurrent": false,
+					"SearchCodens": ["cqs", "chongqingshi"],
+					"Children": "15202||15204||15206||15208||15210||15212||15214||15216||15218||15220||15222||15224||15226||15228||15230||15232||15234||15236||15238||15240||15242||15244||15246||15248||15250||15252||15254||15256||15258||15260||15262||15264||15266||15268||15270||15272||15274||15276"
+				},
+				{
+					"Id": "11026",
+					"Name": "成都市",
+					"IsCurrent": false,
+					"SearchCodens": ["cds", "chengdushi"],
+					"Children": "15278||15280||15282||15284||15286||15288||15290||15292||15294||15296||15298||15300||15302||15304||15306||15308||15310||15312||15314||20196"
+				}],
+				"N": [{
+					"Id": "10708",
+					"Name": "南京市",
+					"IsCurrent": false,
+					"SearchCodens": ["njs", "nanjingshi"],
+					"Children": "12692||12694||12696||12698||12700||12702||12704||12706||12708||12710||12712"
+				},
+				{
+					"Id": "10806",
+					"Name": "南昌市",
+					"IsCurrent": false,
+					"SearchCodens": ["ncs", "nanchangshi"],
+					"Children": "13450||13452||13454||13456||13458||13460||13462||13464||13466||30255||30256||30257||30258||30259"
+				},
+				{
+					"Id": "10990",
+					"Name": "南宁市",
+					"IsCurrent": false,
+					"SearchCodens": ["nns", "nanningshi"],
+					"Children": "14934||14936||14938||14940||14942||14944||14946||14948||14950||14952||14954||14956"
+				}],
+				"J": [{
+					"Id": "10740",
+					"Name": "嘉兴市",
+					"IsCurrent": false,
+					"SearchCodens": ["jxs", "jiaxingshi"],
+					"Children": "12960||12962||12964||12966||12968||12970||12972"
+				}],
+				"L": [{
+					"Id": "10754",
+					"Name": "丽水市",
+					"IsCurrent": false,
+					"SearchCodens": ["lss", "lishuishi"],
+					"Children": "13052||13054||13056||13058||13060||13062||13064||13066||13068"
+				},
+				{
+					"Id": "10992",
+					"Name": "柳州市",
+					"IsCurrent": false,
+					"SearchCodens": ["lzs", "liuzhoushi"],
+					"Children": "14958||14960||14962||14964||14966||14968||14970||14972||14974||14976"
+				}],
+				"Z": [{
+					"Id": "10862",
+					"Name": "郑州市",
+					"IsCurrent": false,
+					"SearchCodens": ["zzs", "zhengzhoushi"],
+					"Children": "13924||13926||13928||13930||13932||13934||13936||13938||13940||13942"
+				}],
+				"W": [{
+					"Id": "10894",
+					"Name": "武汉市",
+					"IsCurrent": false,
+					"SearchCodens": ["whs", "wuhanshi"],
+					"Children": "14244||14246||14248||14250||14252||14254||14256||14258||14260||14262||14264||14266||14268||30354||30355"
+				}],
+				"G": [{
+					"Id": "10948",
+					"Name": "广州市",
+					"IsCurrent": false,
+					"SearchCodens": ["gzs", "guangzhoushi"],
+					"Children": "14694||14696||14698||14700||14702||14704||14706||14708||14710||14714||14716"
+				}],
+				"K": [{
+					"Id": "11084",
+					"Name": "昆明市",
+					"IsCurrent": false,
+					"SearchCodens": ["kms", "kunmingshi"],
+					"Children": "15822||15824||15826||15828||15830||15832||15834||15836||15838||15840||15842||15844||15846||15848"
+				}],
+				"Y": [{
+					"Id": "11194",
+					"Name": "银川市",
+					"IsCurrent": false,
+					"SearchCodens": ["ycs", "yinchuanshi"],
+					"Children": "16700||16702||16704||16706||16708||16710"
+				}]
+			}
+		},
+		{
+			"PropertyTypeId": "25",
+			"Name": "办公",
+			"Code": "Office",
+			"DefaultAreaId": "",
+			"Areas": {
+				"T": [{
+					"Id": "20233",
+					"Name": "台北市",
+					"IsCurrent": false,
+					"SearchCodens": ["tbs", "taibeishi"],
+					"Children": "20236||20237||20238"
+				},
+				{
+					"Id": "20235",
+					"Name": "台中市",
+					"IsCurrent": false,
+					"SearchCodens": ["tzs", "taizhongshi"],
+					"Children": "20242||20243||20244"
+				}],
+				"X": [{
+					"Id": "20234",
+					"Name": "新北市",
+					"IsCurrent": false,
+					"SearchCodens": ["xbs", "xinbeishi"],
+					"Children": "20239||20240||20241"
+				}]
+			}
+		},
+		{
+			"PropertyTypeId": "26",
+			"Name": "商铺",
+			"Code": "商铺",
+			"DefaultAreaId": "",
+			"Areas": {
+				"T": [{
+					"Id": "20233",
+					"Name": "台北市",
+					"IsCurrent": false,
+					"SearchCodens": ["tbs", "taibeishi"],
+					"Children": "20236||20237||20238"
+				},
+				{
+					"Id": "20235",
+					"Name": "台中市",
+					"IsCurrent": false,
+					"SearchCodens": ["tzs", "taizhongshi"],
+					"Children": "20242||20243||20244"
+				}],
+				"X": [{
+					"Id": "20234",
+					"Name": "新北市",
+					"IsCurrent": false,
+					"SearchCodens": ["xbs", "xinbeishi"],
+					"Children": "20239||20240||20241"
+				}]
+			}
+		},
+		{
+			"PropertyTypeId": "96",
+			"Name": "工业",
+			"Code": "工业厂房",
+			"DefaultAreaId": "",
+			"Areas": {
+				"T": [{
+					"Id": "20233",
+					"Name": "台北市",
+					"IsCurrent": false,
+					"SearchCodens": ["tbs", "taibeishi"],
+					"Children": "20236||20237||20238"
+				},
+				{
+					"Id": "20235",
+					"Name": "台中市",
+					"IsCurrent": false,
+					"SearchCodens": ["tzs", "taizhongshi"],
+					"Children": "20242||20243||20244"
+				}],
+				"X": [{
+					"Id": "20234",
+					"Name": "新北市",
+					"IsCurrent": false,
+					"SearchCodens": ["xbs", "xinbeishi"],
+					"Children": "20239||20240||20241"
+				}]
+			}
+		}],
+		"UserModel": {
+			"Id": 614659763830001111,
+			"Account": "weixin",
+			"Name": "通用账号",
+			"ActiveTime": "2018-01-01T00:00:00",
+			"AppToken": "793f0b18378dcc5905de08d3bf361111"
+		}
+	},
+	"State": 0,
+	"Message": "success"
+}

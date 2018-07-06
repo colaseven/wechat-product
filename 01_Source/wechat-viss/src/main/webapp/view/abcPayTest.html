@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>农行支付接口测试</title>
+    <link rel="stylesheet" href="../css/framework7.ios.min.css">
+    <link rel="stylesheet" href="../css/framework7.ios.colors.min.css">
+    <link rel="stylesheet" href="../css/weui/weui.css">
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/my-app.css">
+</head>
+<body>
+<div class="views">
+    <div class="view view-main">
+        <div class="pages" style="background: none;">
+            <div data-page="my-form" class="page with-subnavbar no-navbar no-toolbar">
+                <div class="page-content" style="padding-top: 0px;">
+                    <form id="my-form" class="list-block store-data" style="margin: 0;">
+                        <ul>
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title label">交易类型</div>
+                                        <div class="item-input">
+                                            <input type="text" name="PayTypeID">
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title label">订单日期</div>
+                                        <div class="item-input">
+                                            <input type="text" name="OrderDate">
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title label">订单时间</div>
+                                        <div class="item-input">
+                                            <input type="text" name="OrderTime">
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title label">交易币种</div>
+                                        <div class="item-input">
+                                            <input type="text" name="CurrencyCode">
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title label">订单编号</div>
+                                        <div class="item-input">
+                                            <input type="text" name="OrderNo">
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title label">交易金额</div>
+                                        <div class="item-input">
+                                            <input type="text" name="OrderAmount">
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title label">支付账户</div>
+                                        <div class="item-input">
+                                            <input type="text" name="AccountNo">
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title label">openId</div>
+                                        <div class="item-input">
+                                            <input type="text" name="OpenID">
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title label">分期标识</div>
+                                        <div class="item-input">
+                                            <input type="text" name="InstallmentMark">
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title label">商品种类</div>
+                                        <div class="item-input">
+                                            <input type="text" name="CommodityType">
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title label">订单说明</div>
+                                        <div class="item-input">
+                                            <input type="text" name="OrderDesc">
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title label">商品名称</div>
+                                        <div class="item-input">
+                                            <input type="text" name="ProductName">
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title label">支付类型</div>
+                                        <div class="item-input">
+                                            <input type="text" name="PaymentType">
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title label">交易渠道</div>
+                                        <div class="item-input">
+                                            <input type="text" name="PaymentLinkType">
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title label">通知方式</div>
+                                        <div class="item-input">
+                                            <input type="text" name="NotifyType">
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title label">通知URL地址</div>
+                                        <div class="item-input">
+                                            <input type="text" name="ResultNotifyURL">
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title label">交易是否分账</div>
+                                        <div class="item-input">
+                                            <input type="text" name="IsBreakAccount">
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                        <div class="content-block">
+                            <p>
+                            <div id="commit" class="btn_primary">提交</div>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="../js/framework7.js"></script>
+<script type="text/javascript" src="../js/jquery-1.7.2.js"></script>
+<script src="../js/store.min.js"></script>
+<script>
+    var myApp = new Framework7({
+        onAjaxStart: function () {
+            myApp.showIndicator();
+        },
+        onAjaxComplete: function () {
+            myApp.hideIndicator();
+        },
+        modalTitle: '提示',
+        init: false
+    });
+    var $$ = Dom7;
+    myApp.onPageInit('my-form', function () {
+        $$('[name="PayTypeID"]').val("JSAPI");
+        $$('[name="OrderDate"]').val("2018/03/21");
+        $$('[name="OrderTime"]').val("15:14:38");
+        $$('[name="OrderNo"]').val("15216164778320133606531");
+        $$('[name="CurrencyCode"]').val("156");
+        $$('[name="OrderAmount"]').val("0.01");
+        $$('[name="AccountNo"]').val("wx4274ce8a60e68b5d");
+        $$('[name="OrderDesc"]').val("厦门中利评估-产品购买");
+        $$('[name="OpenID"]').val("oqmQYuBEL-utlaAaRuohnIlWA9dE");
+        $$('[name="InstallmentMark"]').val("0");
+        $$('[name="CommodityType"]').val("0499");
+        $$('[name="ProductName"]').val("委托报告");
+        $$('[name="PaymentType"]').val("8");
+        $$('[name="PaymentLinkType"]').val("1");
+        $$('[name="NotifyType"]').val("1");
+        $$('[name="ResultNotifyURL"]').val("http://caadwechat.visscaa.com/home/index.do");
+        $$('[name="IsBreakAccount"]').val("0");
+    });
+    myApp.init();
+    /*提交表单*/
+    $$('#commit').click(function () {
+        var formData = myApp.formToJSON('#my-form');
+        param = JSON.stringify(formData);
+        $$.ajax({
+            //url: '/entrust/abcPayTest.do',
+            dataType: 'text',
+            method: 'post',
+            data: {
+                model: param
+            },
+            beforeSend: function () {
+                myApp.showIndicator();
+            },
+            complete: function () {
+                myApp.hideIndicator();
+            },
+            success: function (data) {
+                myApp.alert(data);
+            }
+        })
+    });
+</script>
+</body>
+</html>

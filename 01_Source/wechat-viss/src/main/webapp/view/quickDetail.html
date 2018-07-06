@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>快捷回价详情</title>
+    <link rel="stylesheet" href="../css/framework7.ios.min.css">
+    <link rel="stylesheet" href="../css/framework7.ios.colors.min.css">
+    <link rel="stylesheet" href="../css/weui/weui.css">
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/my-app.css">
+</head>
+<body>
+<div class="views">
+    <div class="view view-main">
+        <div class="pages no-navbar">
+            <div data-page="quickDetail" class="page">
+                <div class="page-content">
+                    <div id="detail_container">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="../js/framework7.js"></script>
+<script src="../js/jquery.js"></script>
+<script src="../js/store.min.js"></script>
+<script type="text/javascript">
+    var myApp = new Framework7({
+        onAjaxStart: function () {
+            myApp.showIndicator();
+        },
+        onAjaxComplete: function () {
+            myApp.hideIndicator();
+        },
+        modalCloseByOutside: true,
+        actionsCloseByOutside: false,
+        popupCloseByOutside: false,
+        modalTitle: '提示',
+        init: false
+    });
+    var $$ = Dom7;
+    myApp.onPageInit('quickDetail', function () {
+        getQuickDetail();
+    });
+    var inquiryData = '';
+    function getQuickDetail() {
+        $$.ajax({
+            url: '/quick/particulars.do',
+            dataType: 'json',
+            method: 'get',
+            data: {
+                entrustId: $$.parseQuery(document.url).id,
+                appId: $$.parseQuery(document.url).appId
+            },
+            beforeSend: function () {
+                myApp.showIndicator();
+            },
+            complete: function () {
+                myApp.hideIndicator();
+            },
+            success: function (data) {
+                var telephone = store.get('imgTel');
+                if (telephone === undefined) {
+                    telephone = data.telephone;
+                } else {
+                    telephone = store.get('imgTel').telephone;
+                }
+                inquiryData = data;
+                var innerHtml = '', lastHtml = '', listHtml = '';
+                listHtml += '<div class="baseInfo"><span>&nbsp;基本信息</span> </div>';
+                listHtml += '<div class="tab_cnt_item jgpg"><div class="common_line_box">';
+                listHtml += '<div class="common_line flex_lr"><span>省</span><aside>' + data.provinceName + '</aside></div>';
+                listHtml += '<div class="common_line flex_lr"><span>市</span><aside>' + data.cityName + '</aside></div>';
+                listHtml += '<div class="common_line flex_lr"><span>区</span><aside>' + data.countyName + '</aside></div>';
+                listHtml += '<div class="common_line flex_lr"><span>所属项目</span><aside>' + data.projectName + '</aside></div>';
+                listHtml += '<div class="common_line flex_lr"><span>详细地址</span><aside>' + data.detailAddress + '</aside></div>';
+                listHtml += '<div class="common_line flex_lr"><span>姓名</span><aside>' + data.inquirerName + '</aside></div>';
+                listHtml += '<div class="common_line flex_lr"><span>电话</span><aside>' + data.mobilePhone + '</aside></div>';
+                listHtml += '<div class="common_line flex_lr"><span>价值时点</span><aside>' + data.timePoint + '</aside></div>';
+                if (data.remarks !== '') {
+                    listHtml += '<div class="common_line flex_lr"><span>备注</span><aside>' + data.remarks + '</aside></div>';
+                }
+                listHtml += '<div class="common_line flex_lr"><span>购房日期</span><aside>' + data.purchaseTime + '</aside></div>';
+                if (data.purchasePrice !== 0) {
+                    listHtml += '<div class="common_line flex_lr"><span>登记价格</span><aside>' + data.purchasePrice + '元</aside></div>';
+                }
+                if (data.internalArea !== 0) {
+                    listHtml += '<div class="common_line flex_lr"><span>套内面积</span><aside>' + data.internalArea + '㎡</aside></div>';
+                }
+                if (data.completionYear !== '') {
+                    listHtml += '<div class="common_line flex_lr"><span>竣工日期</span><aside>' + data.completionYear + '</aside></div>';
+                }
+                if (data.purposeName !== '') {
+                    listHtml += '<div class="common_line flex_lr"><span>证载用途</span><aside>' + data.purposeName + '</aside></div>';
+                }
+                if (data.landTenureTypeName !== '') {
+                    listHtml += '<div class="common_line flex_lr"><span>使用权来源</span><aside>' + data.landTenureTypeName + '</aside></div>';
+                }
+                if (data.obligeeName !== '') {
+                    listHtml += '<div class="common_line flex_lr"><span>权利人属性</span><aside>' + data.obligeeName + '</aside></div>';
+                }
+                listHtml += '</div></div>';
+                switch (data.className) {
+                    case 'sealingalloting':
+                    case 'sealed':
+                    case 'sealing':
+                    case 'check':
+                    case 'checking':
+                    case 'complete':
+                        innerHtml += '<div class="detail_box"><div class="detail_body"><b></b><h3>市场评估总价</h3><h1><b>' + data.assessTotalPrice + '</b><span>万元</span></h1></div>';
+                        innerHtml += '<div class="detail_footer"><div class="detail_footer_item"><span>面积(㎡)</span><b style="font-size: 1rem">' + data.floorAcreage + '</b></div>';
+                        innerHtml += '<div class="detail_footer_item"><span>单价(元/㎡)</span><b style="font-size: 1rem">' + data.assessSinglePrice + '</b></div></div></div>';
+                        innerHtml += listHtml;
+                        innerHtml += '<div class="empty_tips">如有疑问，请拨打电话：<a class="external" href="tel:' + telephone + '">' + telephone + '</a></div>'
+                        break;
+                    case 'overdue':
+                        innerHtml += '<div class="detail_box"><div class="detail_body detail_error"><h2>询价单超时</h2><h3>请重新询价</h3></div></div>';
+                        innerHtml += listHtml;
+                        lastHtml += '<a class="btn_default external" href="/view/quickService.html?propertyId=' + data.propertyType + '&productId=' + data.productId + '&id=' + data.id + '&isAgainAssess=1">重新询价</a><div class="empty_tips">如有疑问，请拨打电话：<a class="external" href="tel:' + telephone + '">' + telephone + '</a></div>';
+                        break;
+                    case 'unassess':
+                        innerHtml += '<div class="detail_box"><div class="detail_body detail_error"><h2>无法回价</h2><h3>由于资料错误，估价师无法回价</h3><h3>请重新询价</h3></div></div>';
+                        innerHtml += listHtml;
+                        lastHtml += '<a class="btn_default external" href="/view/quickService.html?propertyId=' + data.propertyType + '&productId=' + data.productId + '&id=' + data.id + '&isAgainAssess=1">重新询价</a><div class="empty_tips">如有疑问，请拨打电话：<a class="external" href="tel:' + telephone + '">' + telephone + '</a></div>';
+                        break;
+                    case 'supplementing':
+                        innerHtml += '<div class="detail_box"><div class="detail_body detail_error"><h2>补充资料</h2><h3>由于资料缺失，估价师无法回价</h3><h3>请补充资料或者重新询价</h3></div></div>';
+                        innerHtml += listHtml;
+                        lastHtml += '<a class="btn_primary external" style="color: white" href="/view/quickService.html?propertyId=' + data.propertyType + '&productId=' + data.productId + '&id=' + data.id + '">补充资料</a><a class="btn_default external" href="/view/quickService.html?propertyId=' + data.propertyType + '&productId=' + data.productId + '&id=' + data.id + '&isAgainAssess=1">重新询价</a><div class="empty_tips">如有疑问，请拨打电话：<a class="external" href="tel:' + telephone + '">' + telephone + '</a></div>';
+                        break;
+                    case 'rejected':
+                        innerHtml += '<div class="detail_box"><div class="detail_body detail_error"><h2>此单据已撤销</h2><h3>请重新询价</h3></div></div>';
+                        innerHtml += listHtml;
+                        lastHtml += '<a class="btn_default external" href="/view/quickService.html?propertyId=' + data.propertyType + '&productId=' + data.productId + '&id=' + data.id + '&isAgainAssess=1">重新询价</a><div class="empty_tips">如有疑问，请拨打电话：<a class="external" href="tel:' + telephone + '">' + telephone + '</a></div>';
+                        break;
+                    case 'toSurvey':
+                    case 'alloting':
+                    case 'assessment':
+                    case 'surveying':
+                    default:
+                        innerHtml += '<div class="detail_box"><div class="detail_body detail_error"><h2>等待回价</h2></div></div>';
+                        innerHtml += listHtml;
+                        lastHtml += '<div class="empty_tips">如有疑问，请拨打电话：<a class="external" href="tel:' + telephone + '">' + telephone + '</a></div>';
+                        break;
+                }
+                $$('#detail_container').append(innerHtml + lastHtml);
+            }, error: function () {
+                window.location.href = "/view/error.html";
+            }
+        })
+    }
+    myApp.init();
+</script>
+</body>
+</html>

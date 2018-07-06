@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>委托报告详情</title>
+    <link rel="stylesheet" href="../css/framework7.ios.min.css">
+    <link rel="stylesheet" href="../css/framework7.ios.colors.min.css">
+    <link rel="stylesheet" href="../css/weui/weui.css">
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/my-app.css">
+</head>
+<body>
+<div class="views">
+    <div class="view view-main">
+        <div class="pages no-navbar">
+            <div data-page="entrustDetail" class="page">
+                <div class="page-content">
+                    <div id="detail_container">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="../js/framework7.js"></script>
+<script src="../js/jquery.js"></script>
+<script src="../js/store.min.js"></script>
+<script type="text/javascript">
+    var myApp = new Framework7({
+        onAjaxStart: function () {
+            myApp.showIndicator();
+        },
+        onAjaxComplete: function () {
+            myApp.hideIndicator();
+        },
+        modalCloseByOutside: false,
+        actionsCloseByOutside: false,
+        popupCloseByOutside: false,
+        modalTitle: '提示',
+        init: false
+    });
+    var $$ = Dom7;
+    myApp.onPageInit('entrustDetail', function () {
+        getEntrustDetail();
+    });
+    var inquiryData = '';
+    var appId;
+    function getEntrustDetail() {
+        $$.ajax({
+            url: '/entrust/particulars.do',
+            dataType: 'json',
+            method: 'get',
+            data: {
+                entrustId: $$.parseQuery(document.url).id,
+                appId: $$.parseQuery(document.url).appId,
+                openId: $$.parseQuery(document.url).openId
+            },
+            beforeSend: function () {
+                myApp.showIndicator();
+            },
+            complete: function () {
+                myApp.hideIndicator();
+            },
+            success: function (data) {
+                var telephone = store.get('imgTel');
+                appId = data.openId;
+                if (telephone === undefined) {
+                    telephone = data.telephone;
+                } else {
+                    telephone = store.get('imgTel').telephone;
+                }
+                inquiryData = data;
+                var innerHtml = '', lastHtml = '', listHtml = '';
+                listHtml += '<div class="baseInfo"><span>&nbsp;基本信息</span> </div>';
+                listHtml += '<div class="tab_cnt_item jgpg"><div class="common_line_box">';
+                listHtml += '<div class="common_line flex_lr"><span>省</span><aside>' + data.provinceName + '</aside></div>';
+                listHtml += '<div class="common_line flex_lr"><span>市</span><aside>' + data.cityName + '</aside></div>';
+                listHtml += '<div class="common_line flex_lr"><span>区</span><aside>' + data.countyName + '</aside></div>';
+                listHtml += '<div class="common_line flex_lr"><span>委托人姓名</span><aside>' + data.entrustLinkman + '</aside></div>';
+                listHtml += '<div class="common_line flex_lr"><span>委托人电话</span><aside>' + data.entrustMobilePhone + '</aside></div>';
+                listHtml += '<div class="common_line flex_lr"><span>项目地址</span><aside>' + data.detailAddress + '</aside></div>';
+                listHtml += '<div class="common_line flex_lr"><span>建筑面积</span><aside>' + data.floorAcreage + '㎡</aside></div>';
+                listHtml += '<div class="common_line flex_lr"><span>报告快递地址</span><aside>' + data.reportexpressAddress + '</aside></div>';
+                if (data.obligeeUserName !== '') {
+                    listHtml += '<div class="common_line flex_lr"><span>产权人</span><aside>' + data.obligeeUserName + '</aside></div>';
+                }
+                listHtml += '<div class="common_line flex_lr"><span>土地面积</span><aside>' + data.landAcreage + '㎡</aside></div>';
+                if (data.appraisalObjectiveName !== null) {
+                    listHtml += '<div class="common_line flex_lr"><span>估价目的</span><aside>' + data.appraisalObjectiveName + '</aside></div>';
+                }
+                if (data.noChargeCount !== null) {
+                    listHtml += '<div class="common_line flex_lr"><span>待支付金额</span><aside>' + data.toBePaid + ' 元</aside></div>';
+                    listHtml += '<div class="common_line flex_lr"><span>已支付金额</span><aside>' + data.alreadyPaid + ' 元</aside></div>';
+                }
+                listHtml += '</div></div>';
+                if (data.noChargeCount === '0' || data.noChargeCount === null) {
+                    var totalPrice = data.assessTotalPrice;
+                    var singlePrice = data.assessSinglePrice;
+                    var text = '';
+                    var attachmentColor = '#2cb7ff';
+                    if (singlePrice === null || singlePrice === '0' || data.noChargeCount === null) {
+                        totalPrice = "*****";
+                        singlePrice = "*****";
+                        attachmentColor = '#afb3b8';
+                        text = '您的报告已评估完成，需完成付费，请与估价师联系，如有疑问请拨打电话：<a class="external" style="color: white;text-decoration:underline" href="tel:' + telephone + '">' + telephone + '</a>';
+                    }
+                    switch (data.className) {
+                        case 'sealingalloting':
+                        case 'sealed':
+                        case 'sealing':
+                        case 'check':
+                        case 'checking':
+                        case 'complete':
+                            innerHtml += '<div class="detail_box"><div class="detail_body"><h3>市场评估总价</h3><h1><b>' + totalPrice + '</b><span>万元</span></h1>' + text + '</div>';
+                            innerHtml += '<div class="detail_footer"><div class="detail_footer_item"><span>面积(㎡)</span><b style="font-size: 1rem">' + data.floorAcreage + '</b></div>';
+                            innerHtml += '<div class="detail_footer_item"><span>单价(元/㎡)</span><b style="font-size: 1rem">' + singlePrice + '</b></div></div></div>';
+                            innerHtml += listHtml;
+                            innerHtml += '<div class="attachment" ><a  href="javascript:" onclick="checkAttachment(this)"  data-reportUrl="' + data.reportUrl + '" style="color: ' + attachmentColor + '">查看报告附件</a></div><div class="empty_tips">如有疑问，请拨打电话：<a class="external" href="tel:' + telephone + '">' + telephone + '</a></div>';
+                            break;
+                        case 'overdue':
+                            innerHtml += '<div class="detail_box"><div class="detail_body detail_error"><h2>报告单已超时</h2><h3>请重新委托</h3></div></div>';
+                            lastHtml += '<div class="attachment" ><a  href="javascript:" onclick="checkAttachment(this)"  data-reportUrl="' + data.reportUrl + '"  style="color: #afb3b8">查看报告附件</a></div>';
+                            innerHtml += listHtml;
+                            lastHtml += '<a class="btn_default external" href="/view/entrustService.html?propertyId=' + data.propertyType + '&productId=' + data.productId + '&id=' + data.id + '&isAgainAssess=1">重新委托</a><div class="empty_tips">如有疑问，请拨打电话：<a class="external" href="tel:' + telephone + '">' + telephone + '</a></div>';
+                            break;
+                        case 'unassess':
+                            innerHtml += '<div class="detail_box"><div class="detail_body detail_error"><h2>无法评估</h2><h3>请重新委托</h3></div></div>';
+                            lastHtml += '<div class="attachment" ><a  href="javascript:" onclick="checkAttachment(this)"  data-reportUrl="' + data.reportUrl + '"  style="color: #afb3b8">查看报告附件</a></div>';
+                            innerHtml += listHtml;
+                            lastHtml += '<a class="btn_default external" href="/view/entrustService.html?propertyId=' + data.propertyType + '&productId=' + data.productId + '&id=' + data.id + '&isAgainAssess=1">重新委托</a><div class="empty_tips">如有疑问，请拨打电话：<a class="external" href="tel:' + telephone + '">' + telephone + '</a></div>';
+                            break;
+                        case 'supplementing':
+                            innerHtml += '<div class="detail_box"><div class="detail_body detail_error"><h2>补充资料</h2><h3>报告资料不完整</h3><h3>请重新补充资料或者重新委托</h3></div></div>';
+                            lastHtml += '<div class="attachment" ><a  href="javascript:" onclick="checkAttachment(this)"  data-reportUrl="' + data.reportUrl + '"  style="color: #afb3b8">查看报告附件</a></div>';
+                            innerHtml += listHtml;
+                            lastHtml += '<a class="btn_primary external" style="color: white" href="/view/entrustService.html?propertyId=' + data.propertyType + '&productId=' + data.productId + '&id=' + data.id + '">补充资料</a><a class="btn_default external" href="/view/entrustService.html?propertyId=' + data.propertyType + '&productId=' + data.productId + '&id=' + data.id + '&isAgainAssess=1">重新委托</a><div class="empty_tips">如有疑问，请拨打电话：<a class="external" href="tel:' + telephone + '">' + telephone + '</a></div>';
+                            break;
+                        case 'rejected':
+                            innerHtml += '<div class="detail_box"><div class="detail_body detail_error"><h2>此单据已撤销</h2><h3>请重新委托</h3></div></div>';
+                            lastHtml += '<div class="attachment" ><a  href="javascript:" onclick="checkAttachment(this)"  data-reportUrl="' + data.reportUrl + '"  style="color: #afb3b8">查看报告附件</a></div>';
+                            innerHtml += listHtml;
+                            lastHtml += '<a class="btn_default external" href="/view/entrustService.html?propertyId=' + data.propertyType + '&productId=' + data.productId + '&id=' + data.id + '&isAgainAssess=1">重新委托</a><div class="empty_tips">如有疑问，请拨打电话：<a class="external" href="tel:' + telephone + '">' + telephone + '</a></div>';
+                            break;
+                        case 'toSurvey':
+                        case 'alloting':
+                        case 'assessment':
+                        case 'surveying':
+                        default:
+                            innerHtml += '<div class="detail_box"><div class="detail_body detail_error"><h2>评估中</h2></div></div>';
+                            lastHtml += '<div class="attachment" ><a href="javascript:" onclick="checkAttachment(this)"  data-reportUrl="' + data.reportUrl + '" style="color: #afb3b8">查看报告附件</a></div>';
+                            innerHtml += listHtml;
+                            lastHtml += '<div class="empty_tips">如有疑问，请拨打电话：<a class="external" href="tel:' + telephone + '">' + telephone + '</a></div>';
+                            break;
+                    }
+                } else {
+                    if (data.className === 'complete') {
+                        innerHtml += '<div class="detail_box"><div class="detail_body"><h3>报告已评估完成，如需查看请 <span><a  href="javascript:" onclick="entrustPay(this)" data-toBePaid="' + data.toBePaid + '" data-idList="' + data.toBePaidIdList + '"><u><b style="color: blue">完成支付</b></u></a></span></h3><br><h3>市场评估总价<h3>*****（万元）</h3></h3></h3></div>';
+                        innerHtml += '<div class="detail_footer"><div class="detail_footer_item"><span>面积(㎡)</span><b style="font-size: 1rem">' + data.floorAcreage + '</b></div>';
+                        innerHtml += '<div class="detail_footer_item"><span>单价(元/㎡)</span><b style="font-size: 1rem">*****</b></div></div></div>';
+                        innerHtml += listHtml;
+                        innerHtml += '<div class="attachment" ><a  href="javascript:" onclick="checkAttachment(this)"  data-reportUrl="' + data.reportUrl + '" style="color:#afb3b8">查看报告附件</a></div><div class="empty_tips">如有疑问，请拨打电话：<a class="external" href="tel:' + telephone + '">' + telephone + '</a></div>';
+                    } else if (data.className === 'overdue') {
+                        innerHtml += '<div class="detail_box"><div class="detail_body detail_error"><h2>报告单已超时</h2><h3>请重新委托</h3></div></div>';
+                        lastHtml += '<div class="attachment" ><a  href="javascript:" onclick="checkAttachment(this)"  data-reportUrl="' + data.reportUrl + '"  style="color: #afb3b8">查看报告附件</a></div>';
+                        innerHtml += listHtml;
+                        lastHtml += '<a class="btn_default external" href="/view/entrustService.html?propertyId=' + data.propertyType + '&productId=' + data.productId + '&id=' + data.id + '&isAgainAssess=1">重新委托</a><div class="empty_tips">如有疑问，请拨打电话：<a class="external" href="tel:' + telephone + '">' + telephone + '</a></div>';
+                    } else if (data.className === 'unassess') {
+                        innerHtml += '<div class="detail_box"><div class="detail_body detail_error"><h2>无法评估</h2><h3>请重新委托</h3></div></div>';
+                        lastHtml += '<div class="attachment" ><a  href="javascript:" onclick="checkAttachment(this)"  data-reportUrl="' + data.reportUrl + '"  style="color: #afb3b8">查看报告附件</a></div>';
+                        innerHtml += listHtml;
+                        lastHtml += '<a class="btn_default external" href="/view/entrustService.html?propertyId=' + data.propertyType + '&productId=' + data.productId + '&id=' + data.id + '&isAgainAssess=1">重新委托</a><div class="empty_tips">如有疑问，请拨打电话：<a class="external" href="tel:' + telephone + '">' + telephone + '</a></div>';
+                    } else if (data.className === 'supplementing') {
+                        innerHtml += '<div class="detail_box"><div class="detail_body detail_error"><h2>补充资料</h2><h3>报告资料不完整</h3><h3>请重新补充资料或者重新委托</h3></div></div>';
+                        lastHtml += '<div class="attachment" ><a  href="javascript:" onclick="checkAttachment(this)"  data-reportUrl="' + data.reportUrl + '"  style="color: #afb3b8">查看报告附件</a></div>';
+                        innerHtml += listHtml;
+                        lastHtml += '<a class="btn_primary external" style="color: white" href="/view/entrustService.html?propertyId=' + data.propertyType + '&productId=' + data.productId + '&id=' + data.id + '">补充资料</a><a class="btn_default external" href="/view/entrustService.html?propertyId=' + data.propertyType + '&productId=' + data.productId + '&id=' + data.id + '&isAgainAssess=1">重新委托</a><div class="empty_tips">如有疑问，请拨打电话：<a class="external" href="tel:' + telephone + '">' + telephone + '</a></div>';
+                    }
+                    else if (data.className === 'rejected') {
+                        innerHtml += '<div class="detail_box"><div class="detail_body detail_error"><h2>此单据已撤销</h2><h3>请重新委托</h3></div></div>';
+                        lastHtml += '<div class="attachment" ><a  href="javascript:" onclick="checkAttachment(this)"  data-reportUrl="' + data.reportUrl + '"  style="color: #afb3b8">查看报告附件</a></div>';
+                        innerHtml += listHtml;
+                        lastHtml += '<a class="btn_default external" href="/view/entrustService.html?propertyId=' + data.propertyType + '&productId=' + data.productId + '&id=' + data.id + '&isAgainAssess=1">重新委托</a><div class="empty_tips">如有疑问，请拨打电话：<a class="external" href="tel:' + telephone + '">' + telephone + '</a></div>';
+                    } else {
+                        innerHtml += '<div class="detail_box"><div class="detail_body"><h3>您的报告需支付' + data.toBePaid + '元，请尽快<span><a  href="javascript:" onclick="entrustPay(this)" data-toBePaid="' + data.toBePaid + '" data-idList="' + data.toBePaidIdList + '" data-entrustId="' + data.id + '"><u><b style="color: blue">完成支付</b></u></a></span></h3><br><h3>市场评估总价<h3>*****（万元）</h3></h3></h3></div>';
+                        innerHtml += '<div class="detail_footer"><div class="detail_footer_item"><span>面积(㎡)</span><b style="font-size: 1rem">' + data.floorAcreage + '</b></div>';
+                        innerHtml += '<div class="detail_footer_item"><span>单价(元/㎡)</span><b style="font-size: 1rem">*****</b></div></div></div>';
+                        innerHtml += listHtml;
+                        innerHtml += '<div class="attachment" ><a  href="javascript:" onclick="checkAttachment(this)"  data-reportUrl="' + data.reportUrl + '" style="color:#afb3b8">查看报告附件</a></div>';
+                    }
+                }
+                $$('#detail_container').append(innerHtml + lastHtml);
+            }, error: function () {
+                window.location.href = "/view/error.html";
+            }
+        })
+    }
+    function checkAttachment(e) {
+        var attachmentUrl = $$(e).attr('data-reportUrl');
+        if (attachmentUrl === 'null') {
+            myApp.alert("无法查看！")
+        } else {
+            window.location.href = attachmentUrl;
+        }
+    }
+    function entrustPay(e) {
+        var toBePaid = $$(e).attr('data-toBePaid');
+        var idList = $$(e).attr('data-idList');
+        var entrustId = $$(e).attr('data-entrustId');
+        var vmodal = myApp.modal({
+            text: '<div>您应付评估总费用为：</br><h2>' + toBePaid + '元</h2></div>',
+            buttons: [
+                {
+                    title: '提示',
+                    text: '微信支付',
+                    onClick: function () {
+                        myApp.closeModal(vmodal);
+                        $$.ajax({
+                            url: '../entrust/payment.do',
+                            dataType: 'json',
+                            method: 'post',
+                            data: {
+                                price: toBePaid,
+                                idList: idList,
+                                entrustId: entrustId
+                            },
+                            beforeSend: function () {
+                                myApp.showIndicator();
+                            },
+                            complete: function () {
+                                myApp.hideIndicator();
+                            },
+                            success: function (data) {
+                                //处理微信支付后获取到的数据
+                                if (typeof WeixinJSBridge === "undefined") {
+                                    if (document.addEventListener) {
+                                        document.addEventListener('WeixinJSBridgeReady', onBridgeReady(data), false);
+                                    } else if (document.attachEvent) {
+                                        document.attachEvent('WeixinJSBridgeReady', onBridgeReady(data));
+                                        document.attachEvent('onWeixinJSBridgeReady', onBridgeReady(data));
+                                    }
+                                } else {
+                                    onBridgeReady(data);
+                                }
+                            }, error: function () {
+                                window.location.href = "/view/error.html"
+                            }
+                        });
+                    }
+                }
+//                ,
+//                {
+//                    text: '支付宝支付',
+//                    onClick: function () {
+//                        myApp.alert("暂未开通支付宝支付！");
+//                        myApp.closeModal(vmodal);
+//                        myApp.hideIndicator();
+//                    }
+//                }
+            ]
+        })
+    }
+    function onBridgeReady(data) {
+        WeixinJSBridge.invoke(
+            'getBrandWCPayRequest', data,
+            function (res) {
+                if (res.err_msg === "get_brand_wcpay_request:ok") {
+                    var vmodal = myApp.modal({
+                        title: '提示',
+                        text: '支付成功！',
+                        buttons: [
+                            {
+                                text: '跳转操作记录',
+                                onClick: function () {
+                                    window.location.href = 'http://caadwechat.visscaa.com/view/operatingRecord.html?type=10466';
+                                    myApp.closeModal(vmodal);
+                                    myApp.hideIndicator();
+                                }
+                            }
+                        ]
+                    });
+                } else {
+                    myApp.alert("支付失败！")
+                }    // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。
+            }
+        );
+    }
+    myApp.init();
+</script>
+</body>
+</html>

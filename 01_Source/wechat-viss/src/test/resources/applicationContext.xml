@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd"
+       default-lazy-init="true">
+    <bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"/>
+    <bean id="propertyConfigurerData" class="com.caad.secure.config.EncryptPropertyPlaceholderConfigurer">
+        <!--配置多个加载项的顺序
+        <property name="order" value="1" />-->
+        <!--配置多个加载项启用，表示可以忽略未解析到的占位符-->
+        <property name="ignoreUnresolvablePlaceholders" value="true"/>
+        <property name="locations" value="classpath:jdbc.properties"/>
+        <property name="fileEncoding" value="UTF-8"/>
+        <!-- 需要解码的properties属性名 -->
+        <property name="propertyNames">
+            <list>
+                <value>spring.datasource.url</value>
+                <value>spring.datasource.username</value>
+                <value>spring.datasource.password</value>
+            </list>
+        </property>
+    </bean>
+
+
+    <!--接口注入-->
+    <bean id="commonSerice" name="commonSerice" class="com.caad.wechat.utils.sdk.ProxyFactory" factory-method="resolveCustomerApiProxy">
+        <constructor-arg value="com.caad.wechat.service.wechat.ICommonService"/>
+    </bean>
+
+
+    <bean id="systemAssessmentService" name="systemAssessmentService" class="com.caad.wechat.utils.sdk.ProxyFactory" factory-method="resolveCustomerApiProxy">
+        <constructor-arg value="com.caad.wechat.service.wechat.ISystemAssessmentService"/>
+    </bean>
+
+
+    <bean id="productService" name="productService" class="com.caad.wechat.utils.sdk.ProxyFactory" factory-method="resolveCustomerApiProxy">
+        <constructor-arg value="com.caad.wechat.service.wechat.IProductService"/>
+    </bean>
+
+    <bean id="aritificialService" name="aritificialService" class="com.caad.wechat.utils.sdk.ProxyFactory" factory-method="resolveCustomerApiProxy">
+        <constructor-arg value="com.caad.wechat.service.wechat.IAritificialService"/>
+    </bean>
+
+    <!--(此处获取对象的方式是从工厂类中获取静态方法-->
+    <bean id="passportService" name="passportService" class="com.caad.wechat.utils.sdk.ProxyFactory" factory-method="resolveApiProxy">
+        <constructor-arg value="com.caad.wechat.service.portal.IPassportService"/>
+    </bean>
+
+    <bean id="assessAgentService" name="assessAgentService" class="com.caad.wechat.utils.sdk.ProxyFactory" factory-method="resolveCustomerApiProxy">
+        <constructor-arg value="com.caad.wechat.service.wechat.IAssessAgentService"/>
+    </bean>
+    <import resource="classpath:spring.xml"/>
+    <import resource="classpath:spring-jpa.xml"/>
+</beans>

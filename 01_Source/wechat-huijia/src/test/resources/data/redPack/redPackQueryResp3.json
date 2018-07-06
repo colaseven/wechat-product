@@ -1,0 +1,9 @@
+{
+    "status": "SUCCESS",
+    "message": "连接成功",
+    "result": {
+        "reason": "SUCCESS",
+        "status": "发放失败",
+        "tipId": "1356018702201606217241207718"
+    }
+}

@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>系统询价</title>
+    <link rel="stylesheet" href="../css/framework7.ios.min.css">
+    <link rel="stylesheet" href="../css/framework7.ios.colors.min.css">
+    <link rel="stylesheet" href="../css/weui/weui.css">
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/my-app.css">
+    <style>
+        .item-input input {
+            text-align: right;
+        }
+
+        .iconfont {
+            font-size: 2.5rem;
+        }
+
+        .card {
+            margin: 0;
+        }
+
+        .tab_ctl {
+            position: relative;
+        }
+
+        .tab_ctl .tab_ctl_item {
+            font-size: 0.9rem;
+        }
+
+        .item-title, .list-block input[type=text], .list-block input[type=number], .item-after, .item-input select {
+            color: #010101;
+            font-size: 0.9rem;
+        }
+
+        .text-center {
+            color: #010101;
+            font-size: 1.5rem;
+        }
+
+        .label-radio.item-content {
+            background-color: #EFEFEF;
+        }
+
+        .label-radio.item-content .item-inner .item-title {
+            white-space: normal;
+            overflow: unset;
+            text-overflow: unset;
+        }
+    </style>
+</head>
+<body>
+<div class="views">
+    <div class="view view-main">
+        <div class="pages" style="background: none;">
+            <div data-page="appraisal" class="page with-subnavbar no-navbar no-toolbar">
+                <div class="page-content" style="padding-top: 0px;">
+                    <form id="my-form" class="list-block store-data" style="margin: 0;">
+                        <div class="errorHint"></div>
+                        <ul>
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="text-center" style="width: 100%;margin: 15px 0"><i class="iconfont"></i> <span id="communityName"></span></div>
+                                        <input type="hidden">
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title label">详细地址</div>
+                                        <div class="item-input">
+                                            <input type="text" name="address" placeholder="" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <a id="toUnitChoose" class="">
+                                    <div class="item-content">
+                                        <div class="item-inner">
+                                            <div class="item-title">楼栋</div>
+                                            <div class="item-after">
+                                                <input type="text" name="unitName" placeholder="请选择楼栋" id="autocomplete-dropdown-unit" style="height:auto;text-align: right;">
+                                                <input type="hidden" name="unitId">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a id="toRoomChoose" class="">
+                                    <div class="item-content">
+                                        <div class="item-inner">
+                                            <div class="item-title">室号</div>
+                                            <div class="item-after">
+                                                <input type="text" name="roomName" placeholder="请选择室号" id="autocomplete-dropdown-room" style="height:auto;text-align: right;">
+                                                <input type="hidden" name="roomNo">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title label">物业类型</div>
+                                        <div class="item-input">
+                                            <input type="text" placeholder="" name="propertyTypeName" readonly id="pickerProperty">
+                                            <input type="hidden" name="propertyTypeId">
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title label">所在楼层</div>
+                                        <div class="item-input">
+                                            <input type="text" id="" name="floorId" readonly placeholder="请选择所在楼层">
+                                            <select id="TotalFloorList" style="opacity:0;position:absolute;top:0;"></select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title label">地上层数</div>
+                                        <div class="item-input">
+                                            <input type="number" name="totalFloor" placeholder="请输入地上层数">
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title label searchRequired" style="color:#ff3b30">建筑面积</div>
+                                        <div class="item-input">
+                                            <input type="number" name="structureArea" placeholder="请输入建筑面积">
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title label">主朝向</div>
+                                        <div class="item-input" style="position:relative;">
+                                            <input type="text" id="TowardName" placeholder="请选择主朝向" readonly>
+                                            <input type="hidden" name="towardId">
+                                            <select id="toward" style="opacity:0;position:absolute;top:0;"></select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title label">竣工年份</div>
+                                        <div class="item-input">
+                                            <input type="number" name="completionYear" placeholder="请输入年份">
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                        <input type="hidden" name="communityId">
+                        <input type="hidden" name="sessionGuid">
+                        <input type="hidden" name="propertyID">
+                        <div class="content-block">
+                            <p>
+                            <div id="toApprasial" class="btn_primary">立即询价</div>
+                            </p>
+                        </div>
+                        <button type="reset" style="display: none;" id="resetForm"></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="../js/framework7.js"></script>
+<script type="text/javascript" src="../js/jquery-1.7.2.js"></script>
+<script src="../js/store.min.js"></script>
+<script>
+    var roomListArr;
+    var myApp = new Framework7({
+        onAjaxStart: function () {
+            myApp.showIndicator();
+        },
+        onAjaxComplete: function () {
+            myApp.hideIndicator();
+        },
+        modalCloseByOutside: true,
+        actionsCloseByOutside: false,
+        popupCloseByOutside: false,
+        modalTitle: '提示',
+        init: false
+    });
+    var $$ = Dom7;
+    var mainView = myApp.addView('.view-main', {
+        dynamicNavbar: true,
+        domCache: true
+    });
+    var param = $$.parseUrlQuery(document.url).param.split('||'), cityCode, projectId, propertyId, advanced, defaultFloor;
+    var postData;
+    var floorUnit;
+    var roomUnit;
+    cityCode = param[4];
+    postData = {
+        propertyId: param[1],
+        Address: decodeURIComponent(param[2])
+    };
+    switch (param[3]) {
+        case'Project':
+            postData.projectId = param[0];
+            break;
+        case'Building':
+            postData.unitId = param[0];
+            break;
+        case'Households':
+            postData.roomId = param[0];
+            break;
+    }
+    if (store.get('floorObj') && $$.parseUrlQuery(document.url).isTurn === '0') {
+        postData.unitName = store.get('floorObj').unitName;
+        postData.unitId = store.get('floorObj').unitId;
+    }
+    if (store.get('roomObj') && $$.parseUrlQuery(document.url).isTurn === '1') {
+        postData.roomName = store.get('roomObj').roomName;
+        postData.roomId = store.get('roomObj').roomId;
+    }
+    myApp.onPageInit('appraisal', function () {//询价表单页面
+        $$('[name="roomNo"]').val("");
+        $$('[name="towardId"]').val("");
+        $$('[name="propertyTypeId"]').val("");
+        $$('[name="unitId"]').val("");
+
+        $$("#resetForm").click();//初始化
+
+        $('[name="structureArea"]').change(function () {
+            if ($$('[name="structureArea"]').val() <= 0) {
+                $$('[name="structureArea"]').val('');
+            }
+        });
+        $$.ajax({
+            url: '/system/inquiry.do',
+            method: 'post',
+            dataType: 'json',
+            data: postData,
+            beforeSend: function () {
+                myApp.showIndicator();
+            },
+            complete: function () {
+                myApp.hideIndicator();
+            },
+            success: function (data) { //跳转至询价页面
+                store.set('dataParam', {
+                    provinceCode: data.provinceCode,
+                    cityCode: cityCode,
+                    countyCode: data.countyCode,
+                    propertyId: param[1]
+                });
+                defaultFloor = data.floorList[0];
+                projectId = data.communityCode;
+                propertyId = data.propertyId;
+                advanced = data.advanced;
+                roomUnit = data.roomUnit;
+                floorUnit = data.floorUnit;
+                initPage(data);
+            }, error: function () {
+                window.location.href = "/view/error.html";
+            }
+        });
+    });
+
+    myApp.init();
+    function initPage(htmlData) {
+        $$('#toward').html('');
+        $$('#TotalFloorList').html('');
+        $$('#communityName').text(htmlData.communityName);//小区name
+        $$('input[name="communityId"]').val(htmlData.communityCode);
+        $$('input[name="structureArea"]').val(htmlData.structureArea);
+        $$('#TowardName').val(htmlData.toward);
+        $$('[name="address"]').val(htmlData.address);
+        $$('[name="sessionGuid"]').val(htmlData.sessionGuid);
+        $$('[name="propertyID"]').val(htmlData.propertyId);
+        $$('[name="completionYear"]').val(htmlData.completionYear);
+        if (htmlData.unitName !== '') {
+            $$('[name="unitId"]').val(htmlData.unitCode);
+            $$('[name="unitName"]').val(htmlData.unitName);
+        }
+        if (htmlData.roomName !== '') {
+            $$('[name="roomNo"]').val(htmlData.roomCode);
+            $$('[name="roomName"]').val(htmlData.roomName);
+        }
+        $$.each(htmlData.towardList, function (index, value) {
+            var checked = value.name === htmlData.toward ? 'selected' : '';
+            if (checked) {
+                $$('input[name="towardId"]').val(value.value)
+            }
+            $$('#toward').append('<option value="' + value.value + '" ' + checked + '>' + value.name + '</option>');
+        });
+
+        $$('input[name="floorId"]').val(htmlData.floor);
+        $$('[name="totalFloor"]').val(htmlData.upFloor);
+        createFloor(htmlData.floorList[0], htmlData.floorList[1], htmlData.floor);
+        var propertyVal = [], propertyDisVal = [];
+        if (htmlData.propertyType.length > 1) {
+            $$('#pickerProperty').val(htmlData.propertyType[0].name);
+            $$('[name="propertyTypeId"]').val(htmlData.propertyType[0].value);
+            $$.each(htmlData.propertyType, function (index, data) {
+                propertyVal.push(data.value);
+                propertyDisVal.push(data.name);
+            });
+            var pickerProperty = myApp.picker({
+                input: '#pickerProperty',
+                cols: [
+                    {
+                        textAlign: 'center',
+                        values: propertyDisVal
+                    }
+                ],
+                onClose: function (p) {
+                    $$.each(htmlData.propertyType, function (index, data) {
+                        if (data.name === p.value[0]) {
+                            $$('[name="propertyTypeId"]').val(data.value);
+                        }
+                    });
+                }
+            });
+        }
+        else if (htmlData.propertyType.length === 1) {
+            $$('#pickerProperty').val(htmlData.propertyType[0].name).prop('disabled', 'disabled');
+            $$('[name="propertyTypeId"]').val(htmlData.propertyType[0].value);
+        }
+        bindFun();
+    }
+    function createFloor(a, b, c) {
+        $$('#TotalFloorList').html('');
+        var sel;
+        for (var floor = a; floor <= b; floor++) {
+            if (floor !== 0) {
+                sel = c === floor ? "selected" : "";
+                $$('#TotalFloorList').append('<option value="' + floor + '" ' + sel + '>' + floor + '</option>');
+            }
+        }
+    }
+    function bindFun() {
+        var autocompleteDropdownAjaxUnit = myApp.autocomplete({
+            input: '#autocomplete-dropdown-unit',
+            openIn: 'dropdown',
+            preloader: true,
+            valueProperty: 'value',
+            textProperty: 'name',
+            limit: 20,
+            dropdownPlaceholderText: '楼栋选择或录入',
+            updateInputValueOnSelect: false,
+            expandInput: true, // expand input
+            onChange: function (autocomplete, value) {
+                store.set('floorObj', {unitName: value.name, unitId: value.value});
+                if ($$.parseUrlQuery(document.url).isTurn === '0' && $$.parseUrlQuery(document.url).isTurn !== '1') {
+                    window.location.reload();
+                } else {
+                    window.location.replace(window.location.href + "&isTurn=0");
+                }
+            },
+            onClose: function (autocomplete) {
+                var mark = false;
+                $$.each(autocomplete.items, function (index, val) {
+                    if (val.name === $$('[name="unitName"]').val()) {
+                        mark = true;
+                    }
+                });
+                if (!mark) {
+                    roomListArr = {};
+                    $$('[name="unitId"]').val("");
+                    $$('[name="roomNo"]').val("");
+                    $$('[name="roomName"]').val("");
+                    roomList();
+                }
+            },
+            source: function (autocomplete, query, render) {
+                var results = [];
+                setTimeout(function () {
+                    if (query.length === 0) {
+                        render(results);
+                        return;
+                    }
+                }, 700);
+
+                autocomplete.showPreloader();
+                $$.ajax({
+                    url: '/system/floors.do',
+                    dataType: 'json',
+                    method: 'post',
+                    data: {
+                        propertyId: propertyId,
+                        projectId: projectId,
+                        name: query,
+                        query: query,
+                        regionCode: cityCode
+                    },
+                    success: function (data) {
+                        for (var i = 0; i < data.length; i++) {
+                            if (data[i].name.toLowerCase().indexOf(query.toLowerCase()) >= 0) results.push(data[i]);
+                        }
+                        autocomplete.hidePreloader();
+                        render(results);
+                    }, error: function () {
+                        window.location.href = "/view/error.html";
+                    }
+                })
+            }
+        });
+        var autocompleteDropdownAjaxRoom = myApp.autocomplete({
+            input: '#autocomplete-dropdown-room',
+            openIn: 'dropdown',
+            preloader: true,
+            valueProperty: 'roomId',
+            textProperty: 'roomName',
+            limit: 20,
+            dropdownPlaceholderText: '室号选择或录入',
+            updateInputValueOnSelect: false,
+            expandInput: true,
+            onChange: function (autocomplete, value) {
+                store.set('roomObj', {roomName: value.roomNumber, roomId: value.roomId});
+                if ($$.parseUrlQuery(document.url).isTurn === '1' && $$.parseUrlQuery(document.url).isTurn !== '0') {
+                    window.location.reload();
+                } else {
+                    window.location.replace(window.location.href + "&isTurn=1");
+                }
+            },
+            onClose: function (autocomplete) {
+                var mark = false;
+                $$.each(autocomplete.items, function (index, val) {
+                    if (val.name === $$('[name="roomName"]').val()) {
+                        mark = true;
+                    }
+                });
+                if (!mark) {
+                    $$('[name="roomNo"]').val("");
+                }
+            },
+            source: function (autocomplete, query, render) {
+                if ($$('[name="unitName"]').val() !== '') {
+                    var results = [];
+                    setTimeout(function () {
+                        if (query.length === 0) {
+                            render(results);
+                            return;
+                        }
+                    }, 700);
+                    autocomplete.showPreloader();
+                    if (roomListArr.length > 0) {
+                        for (var i = 0; i < roomListArr.length; i++) {
+                            if (roomListArr[i].roomName.toLowerCase().indexOf(query.toLowerCase()) >= 0) results.push(roomListArr[i]);
+                        }
+                    }
+                    autocomplete.hidePreloader();
+                    render(results);
+                }
+                else {
+                    myApp.alert('请先选择楼栋');
+                }
+            }
+        });
+        $$('#TotalFloorList').change(function (e) {
+            $$('[name="floorId"]').val(e.target.selectedOptions[0].value);
+        });
+        $$('[name="totalFloor"]').change(function () {
+            $$('[name="floorId"]').val('');
+            createFloor(defaultFloor, $$(this).val());
+        });
+        $$('#toward').change(function (e) {//修改朝向
+            $$('#TowardName').val(e.target.selectedOptions[0].text);
+            $$('input[name="towardId"]').val(e.target.selectedOptions[0].value);
+        });
+        $$('#autocomplete-dropdown-unit').focus(function () {
+            var offset = $('#toUnitChoose').offset().top;
+            $('body').css({"margin-top": -(offset * 1 - 6) + "px"});
+        }).blur(function () {
+            $('body').css({"margin-top": "0px"});
+        });
+        $$('#autocomplete-dropdown-room').focus(function () {
+            var offset = $('#toRoomChoose').offset().top;
+            $('body').css({"margin-top": -(offset * 1 - 6) + "px"});
+        }).blur(function () {
+            $('body').css({"margin-top": "0px"});
+        });
+        if ($$('[name="unitId"]').val() !== "") {
+            roomList();
+        }
+    }
+
+    $$('#toApprasial').click(function () {
+        store.set('detailParam', {
+            projectName: $$('#communityName').text(),
+            structureArea: $$('[name="structureArea"]').val(),
+            detailAddress: $$('[name="address"]').val()
+        });
+        var formData = myApp.formToJSON('#my-form');
+        if (formData.structureArea === '' && formData.structureArea <= '0') {
+            hintMessage('请输入建筑面积');
+        }
+        else {
+            formData.floorId = [formData.floorId, formData.floorId];
+            formData.totalFloor = [defaultFloor, formData.totalFloor];
+            formData.toward = $$('#TowardName').val();
+            formData = $$.extend(formData, advanced);
+            toApprasial(formData);
+        }
+    });
+    function toApprasial(param) {
+        store.set("systemParam", param);
+        window.location.href = '/view/systemResult.html?propertyId=' + $$('[name="propertyID"]').val() + '&communityId=' + $$('[name="communityId"]').val();
+    }
+    function roomList() {
+        $$.ajax({
+            url: '/system/rooms.do',
+            dataType: 'json',
+            method: 'post',
+            data: {
+                roomUnit: roomUnit,
+                floorUnit: floorUnit,
+                propertyId: propertyId,
+                floorId: $$('[name="unitId"]').val()
+            },
+            success: function (data) {
+                roomListArr = data;
+            }, error: function () {
+                window.location.href = "/view/error.html";
+            }
+        })
+    }
+    /**
+     * 必填项及错误信息提示
+     * @param text
+     */
+    function hintMessage(text) {
+        var errorHint = $$('.errorHint');
+        errorHint.css('display', 'block');
+        errorHint.text(text);
+        setTimeout(function () {
+            errorHint.css('display', 'none');
+        }, 2000);
+    }
+</script>
+</body>
+</html>

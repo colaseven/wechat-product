@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, minimal-ui"/>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>V估价微信版</title>
+    <link rel="stylesheet" href="../css/framework7.ios.min.css">
+    <link rel="stylesheet" href="../css/framework7.ios.colors.min.css">
+    <link rel="stylesheet" href="../css/weui/weui.css">
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/my-app.css">
+    <style>
+        /*重置当前页面framework7样式*/
+        .popover {
+            width: 160px;
+        }
+
+        .row .col-50 {
+            width: -webkit-calc((100%) / 2);
+            width: calc((100%) / 2);
+        }
+
+        .note {
+            color: #afb3b8;
+            bottom: 10px;
+            margin-top: -38%;
+        }
+
+        .list-block .list-button {
+            color: black;
+            font-size: 0.9rem;
+        }
+
+        .disclaimer {
+            margin-top: -2%;
+            font-size: 0.7rem;
+            color: #8a8a8a
+        }
+
+        .more {
+            margin-top: 6%;
+            transform: scale(0.4);
+            -webkit-transform: scale(0.4);
+        }
+
+        .external {
+            font-size: 0.7rem;
+        }
+
+        .actions-modal-button {
+            color: #2cb7ff;
+        }
+
+        .color-red {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+<div class="views">
+    <div class="view view-main">
+        <div class="pages">
+            <div data-page="index" class="page no-navbar no-toolbar">
+                <div class="page-content">
+                    <div class="list-block" style="margin:0;">
+                        <ul>
+                            <li class="row">
+                                <div class="item-content col-50">
+                                    <div class="item-inner" style="border-right: 1px solid #c4c4c4;">
+                                        <div class="item-input" style="text-align: center">
+                                            <input type="hidden" placeholder="请选择物业类型" readonly id="property" data-properycode="">
+                                            <a href="#" class="link assMenu property-about"><span id="showProperty">物业类型</span><i class="iconfont"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="item-content col-50">
+                                    <div class="item-inner" id="pickerIndex">
+                                        <div class="item-input" style="text-align: center">
+                                            <input type="hidden" placeholder="请选择城市" style="text-align: center" readonly id="country" data-countryId="" data-provinceId="">
+                                            <a class="link assMenu"><span id="showCity">选择城市</span><i class="iconfont"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="index_logo" style="margin-top: 16%"> <!--<img class="img-responsive" src="../images/index_cloud.png"/>-->
+                        <div id="logo"></div>
+                    </div>
+                    <div class="index_search" style="margin-top: 30%">
+                        <div class="index_search_tips">
+                            <b>您想评估的房屋位于</b>
+                            <span class="text-muted">V估价</span>
+                        </div>
+                        <input class="index_search_input" style="margin-top: 1%" placeholder="输入小区名称或地址"/>
+                        <a href="#" class="index_search_btn" style="margin-top: 1%">立即询价</a>
+                        <div class="index_search_more ">
+                            <b><a href="#" class="ac-1" style="color:#09BB07;font-size: 0.9rem;text-decoration: underline">更多服务<i class="weui-icon-download" style="font-weight: bold"></i></a></b>
+                        </div>
+                        <div class="index_search_count">已成功估价<span id="count"></span>次</div>
+                    </div>
+                    <div class="index_bottom" style="position: absolute;"><img class="img-responsive" src="../images/bg_chengshi.png"/>
+                        <div class="index_search_count note content-block">
+                            <p><b><a href="#" class="open-about" style="color: #2cb7ff;font-size: 0.8rem" id="companyName"></a></b></p>
+                            <p class="disclaimer">声明<br>
+                            <p style="font-size: 0.7rem;text-align: left; margin-top: -2%;color: #8a8a8a" id="statement"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="popup popup-about">
+    <div class="content-block">
+        <p id="companyDetail"></p>
+        <p><a href="#" class="close-popup btn_default bg-white" style="color: #2cb7ff">关闭</a></p>
+    </div>
+</div>
+<script type="text/javascript" src="../js/framework7.js"></script>
+<script src="../js/store.min.js"></script>
+<script>
+    var myApp = new Framework7({
+        modalCloseByOutside: true,
+        actionsCloseByOutside: false,
+        popupCloseByOutside: false,
+        onAjaxStart: function () {
+            myApp.showIndicator();
+        },
+        onAjaxComplete: function () {
+            myApp.hideIndicator();
+        },
+        modalTitle: '提示',
+        init: false
+    });
+
+    var $$ = Dom7;
+
+    myApp.addView('.view-main', {
+        dynamicNavbar: true,
+        domCache: true
+    });
+    var propertyAndCountry = [], homeData = '', properytyHtml = '';
+    myApp.onPageInit("index", function () {
+        myApp.closeModal();
+        $$.ajax({
+            url: '/home/info.do',
+            method: 'get',
+            dataType: 'json',
+            beforeSend: function () {
+                myApp.showIndicator();
+            },
+            complete: function () {
+                myApp.hideIndicator();
+            },
+            success: function (data) {
+                var areaList;
+                if (data.errorMessage !== null && data.errorMessage !== "") {
+                    myApp.alert(data.errorMessage);
+                    return;
+                }
+                store.set('imgTel', {
+                    telephone: data.organizationInfo.telephone
+                });
+                if (data.organizationInfo.appId === 'wx8785f5a7673a97ba') {
+                    $$('#logo').html('<div class="index_logo_warp" style="transform: scale(0.5);"><img class="img-responsive" src="../images/vissLogo.png"/></div>');
+                } else {
+                    $$('#logo').html('<div class="index_logo_warp"><div class="logo_box"><img class="img-responsive" src="../images/vissLogo.png"/></div><div class="index_logo_line"></div><div class="logo_box"><img class="img-responsive" id="userLogo"></div></div>')
+                }
+                /*填充参数*/
+                homeData = data;
+                $$('#count').text(data.organizationInfo.count);//count
+                $$('#companyName').text(data.organizationInfo.appName);//appName
+                $$('#userLogo').attr('src', data.organizationInfo.logoImgUrl);
+                $$('#statement').html(data.statement);//免责声明
+                propertyAndCountry = data.area.propertyTypes;
+                store.set('propertyAndCountry', propertyAndCountry);
+                var defaultCode = $$.parseQuery(document.url).propertyId ? $$.parseQuery(document.url).propertyId : data.area.defaultPropertyTypeId;
+                properytyHtml += '<div class="popover">' +
+                    '<div class="popover-inner">' +
+                    '<div class="list-block">' +
+                    '<ul id="propertyCtr">';
+                for (var i = 0; i < propertyAndCountry.length; i++) {
+                    properytyHtml += '<li><a href="#" onclick="pickProperty(this)" class="item-link list-button" data-propertyCode="' + propertyAndCountry[i].propertyTypeId + '" data-code="' + propertyAndCountry[i].code + '" data-defaultAreaId="' + propertyAndCountry[i].defaultAreaId + '">' + propertyAndCountry[i].name + '</li>';
+                    //默认物业类型、
+                    if (propertyAndCountry[i].propertyTypeId === defaultCode) {
+                        areaList = propertyAndCountry[i].areas;//区域list
+                        $$('#showProperty').text(propertyAndCountry[i].name);
+                        $$("#property").val(propertyAndCountry[i].name).attr("data-properyCode", propertyAndCountry[i].propertyTypeId).attr('data-code', propertyAndCountry[i].code);
+                    }
+                }
+                getSettingList(propertyAndCountry, defaultCode);
+                if ($$.parseUrlQuery(document.url).param) {
+                    var cur = $$.parseUrlQuery(document.url).param.split(',');
+                    $$('#showCity').text(cur[0]);
+                    $$('#country').attr('data-countryId', cur[1]);
+                    $$('#country').attr('data-provinceId', cur[2]);
+                } else {
+                    for (var area in areaList) {
+                        for (var list = 0; list < areaList[area].length; list++) {
+                            for (var j = 0; j < propertyAndCountry.length; j++) {
+                                if (propertyAndCountry[j].defaultAreaId === areaList[area][list].id) {
+                                    $$('#showCity').text(areaList[area][list].name);
+                                    $$('#country').val(areaList[area][list].name).attr('data-countryId', areaList[area][list].id);
+                                    $$('#country').val(areaList[area][list].name).attr('data-provinceId', areaList[area][list].parentId);
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }
+                properytyHtml += '</ul></div></div><a style="" class="close-popover" id="closePopover"></a></div>';
+
+            }, error: function () {
+                window.location.href = "/view/error.html";
+            }
+        });
+    });
+    $$('#pickerIndex').click(function () {
+        window.location.href = '/view/pickerCity.html?propertyId=' + $$('#property').attr('data-properycode');
+    });
+    myApp.init();
+    $$('#picker-country').on('click', function () {
+        myApp.pickerModal('.picker-info');
+    });
+    $$('.property-about').on('click', function () {
+        var clickedLink = this;
+        myApp.popover(properytyHtml, clickedLink, true);
+    });
+    function getSettingList(dataArr, propertyId) {
+        var productList;
+        var buttons = [];
+        for (var i = 0; i < dataArr.length; i++) {
+            if (dataArr[i].propertyTypeId === propertyId) {
+                productList = dataArr[i].templateTypes;
+            }
+        }
+        for (var j = 0; j < productList.length; j++) {
+            if (productList[j].templateTypeId != 1414805116300000100) {
+                buttons.push({text: productList[j].templateTypeName, id: productList[j].templateTypeId});
+            }
+        }
+        return buttons;
+    }
+
+    $$('.ac-1').on('click', function () {
+        var buttons = getSettingList(propertyAndCountry, $$('#property').attr('data-properycode'));
+        if (buttons.length > 0) {
+            for (var i = 0; i < buttons.length; i++) {
+                var onClickStr;
+                switch (buttons[i].id) {
+                    //系统询价
+                    case "1414805116300000100":
+                        break;
+                    //房地产报告
+                    case "10466":
+                        onClickStr = function () {
+                            entrustEntrance(10466);
+                        };
+                        break;
+                    //人工询价单
+                    case "10465":
+                        onClickStr = function () {
+                            comingSoon();
+                        };
+                        break;
+                    //快捷回价
+                    case  "16941":
+                        onClickStr = function () {
+                            quickEntrance(16941)
+                        };
+                        break;
+                    //地址标准化
+                    case  "8220644737759051840":
+                        onClickStr = function () {
+                            comingSoon();
+                        };
+                        break;
+                    default:
+                        break
+                }
+                buttons[i].onClick = onClickStr;
+            }
+            var buttons1 = buttons;
+            var buttons2 = [
+                {
+                    text: '关闭',
+                    color: 'red'
+                }
+            ];
+            var groups = [buttons1, buttons2];
+            myApp.actions(groups);
+        } else {
+            myApp.alert("没有对应的服务！");
+        }
+    });
+
+    function pickProperty(e) {
+        $$('#showProperty').text($$(e).text());
+        $$('#property').val($$(e).text()).attr('data-properycode', $$(e).attr('data-propertycode')).attr('data-code', $$(e).attr('data-code'));
+        getSettingList(propertyAndCountry, $$(e).attr('data-propertycode'));
+        var areaId = $$(e).attr('data-defaultAreaId');
+        var areaList;
+        for (var i = 0; i < propertyAndCountry.length; i++) {
+            if (propertyAndCountry[i].propertyTypeId === $$(e).attr('data-propertycode')) {
+                areaList = propertyAndCountry[i].areas;//区域list
+            }
+        }
+        for (var area in areaList) {
+            for (var list = 0; list < areaList[area].length; list++) {
+                if (areaId === '') {
+                    $$('#showCity').text(areaList[area][0].name);
+                    $$('#country').val(areaList[area][0].name).attr('data-countryId', areaList[area][0].id);
+                    $$('#country').val(areaList[area][0].name).attr('data-provinceId', areaList[area][0].parentId);
+                } else {
+                    if (areaId === areaList[area][list].id) {
+                        $$('#showCity').text(areaList[area][list].name);
+                        $$('#country').val(areaList[area][list].name).attr('data-countryId', areaList[area][list].id);
+                        $$('#country').val(areaList[area][list].name).attr('data-provinceId', areaList[area][list].parentId);
+                    }
+                }
+            }
+        }
+        myApp.closeModal();
+    }
+
+    function comingSoon() {
+        myApp.alert("敬请期待！")
+    }
+    //委托报告入口
+    function entrustEntrance(templateTypeId) {
+        var inquiryParam = $$('#property').attr('data-properycode');
+        var provinceCode = $$('#country').attr('data-provinceId');
+        var countyCode = $$('#country').attr('data-countryId');
+        $$.ajax({
+            url: '/product/list.do',
+            dataType: 'json',
+            method: 'get',
+            data: {
+                propertyId: inquiryParam,
+                templateTypeId: templateTypeId
+            },
+            beforeSend: function () {
+                myApp.showIndicator();
+            },
+            complete: function () {
+                myApp.hideIndicator();
+            },
+            success: function (data) {
+                if (data.length === 1) {
+                    var productId = data[0].id;
+                    window.location.href = '/view/entrustService.html?propertyId=' + inquiryParam + '&productId=' + productId + '&province=' + provinceCode + '&city=' + countyCode;
+                } else if (data.length > 1) {
+                    window.location.href = '/view/entrustProduct.html?propertyId=' + inquiryParam + '&templateTypeId=' + templateTypeId + '&province=' + provinceCode + '&city=' + countyCode;
+                } else {
+                    var vmodal = myApp.modal({
+                        text: '<div>未配置产品，如有疑问请拨打电话：</br><a class="external" style="font-size: 0.9rem;" href="tel:' + store.get('imgTel').telephone + '">' + store.get('imgTel').telephone + '</a></div>',
+                        buttons: [
+                            {
+                                title: '提示',
+                                text: '确定',
+                                onClick: function () {
+                                    myApp.closeModal(vmodal);
+                                    myApp.hideIndicator();
+                                }
+                            }
+                        ]
+                    })
+                }
+            }, error: function () {
+                window.location.href = "/view/error.html"
+            }
+        });
+    }
+    //快捷回价入口
+    function quickEntrance(templateTypeId) {
+        var inquiryParam = $$('#property').attr('data-properycode');
+        var provinceCode = $$('#country').attr('data-provinceId');
+        var countyCode = $$('#country').attr('data-countryId');
+        $$.ajax({
+            url: '/product/list.do',
+            dataType: 'json',
+            method: 'get',
+            data: {
+                propertyId: inquiryParam,
+                templateTypeId: templateTypeId
+            },
+            beforeSend: function () {
+                myApp.showIndicator();
+            },
+            success: function (data) {
+                if (data.length === 1) {
+                    var productId = data[0].id;
+                    $$.ajax({
+                        url: '/home/userResidueCount.do',
+                        dataType: 'json',
+                        method: 'get',
+                        data: {
+                            productId: productId
+                        },
+                        complete: function () {
+                            myApp.hideIndicator();
+                        },
+                        success: function (data) {
+                            if (data > 0 || data === -1) {
+                                window.location.href = '/view/quickService.html?propertyId=' + inquiryParam + '&productId=' + productId + '&province=' + provinceCode + '&city=' + countyCode;
+                            } else {
+                                var vmodal = myApp.modal({
+                                    text: '<div>产品次数已用完，如有疑问请拨打电话：</br><a class="external" style="font-size: 0.9rem;" href="tel:' + store.get('imgTel').telephone + '">' + store.get('imgTel').telephone + '</a></div>',
+                                    buttons: [
+                                        {
+                                            title: '提示',
+                                            text: '权限开通',
+                                            onClick: function () {
+                                                myApp.closeModal(vmodal);
+                                                window.location.href = "/view/purchaseList.html?propertyId=" + inquiryParam;
+                                            }
+                                        }
+                                    ]
+                                })
+                            }
+                        }, error: function () {
+                            window.location.href = "/view/error.html";
+                        }
+                    })
+                } else if (data.length > 1) {
+                    window.location.href = '/view/quickProduct.html?propertyId=' + inquiryParam + '&templateTypeId=' + templateTypeId + '&province=' + provinceCode + '&city=' + countyCode;
+                } else {
+                    var vmodal = myApp.modal({
+                        text: '<div>未配置产品，如有疑问请拨打电话：</br><a class="external" style="font-size: 0.9rem;" href="tel:' + store.get('imgTel').telephone + '">' + store.get('imgTel').telephone + '</a></div>',
+                        buttons: [
+                            {
+                                title: '提示',
+                                text: '确定',
+                                onClick: function () {
+                                    myApp.closeModal(vmodal);
+                                    myApp.hideIndicator();
+                                }
+                            }
+                        ]
+                    })
+                }
+            }, error: function () {
+                window.location.href = "/view/error.html"
+            }
+        });
+    }
+    $$('.open-about').on('click', function () {
+        $$.ajax({
+            url: '/home/companyDetail.do',
+            dataType: 'html',
+            method: 'get',
+            beforeSend: function () {
+                myApp.showIndicator();
+            },
+            complete: function () {
+                myApp.hideIndicator();
+            },
+            success: function (data) {
+                myApp.popup('.popup-about');
+                $$("#companyDetail").html(data);
+            }, error: function () {
+                myApp.alert("您还未设置公司简介！")
+            }
+        });
+    });
+    $$('.index_search_btn').click(function () {
+        if ($$('.index_search_input').val().trim() === '') {
+            myApp.alert('请输入小区名称或地址');
+            return;
+        }
+        if ($$('#country').attr('data-countryId').trim() === '') {
+            myApp.alert('请先选择城市');
+            return;
+        }
+        $$.ajax({
+            url: '/home/systemResidueCount.do',
+            dataType: 'json',
+            method: 'get',
+            data: {
+                propertyId: $$('#property').attr('data-properyCode')
+            },
+            beforeSend: function () {
+                myApp.showIndicator();
+            },
+            complete: function () {
+                myApp.hideIndicator();
+            },
+            success: function (data) {
+                if (data.message === null) {
+                    if (data.residueCount > 0 || data.residueCount === -1) {
+                        window.location.href = '/view/systemSearch.html?param=' + encodeURIComponent($$('.index_search_input').val()) + ',' + $$('#property').attr('data-code') + ',' + $$('#country').attr('data-countryid');
+                    }
+                    else {
+                        var vmodal = myApp.modal({
+                            title: '提示',
+                            text: '<div>您的免费次数已用完，如有疑问请拨打电话：</br><a class="external" style="font-size: 0.9rem;" href="tel:' + store.get('imgTel').telephone + '">' + store.get('imgTel').telephone + '</a></div>',
+                            buttons: [
+                                {
+                                    text: '权限开通',
+                                    onClick: function () {
+                                        myApp.closeModal(vmodal);
+                                        window.location.href = "/view/purchaseList.html?propertyId=" + $$('#property').attr('data-properyCode');
+                                    }
+                                }
+                            ]
+                        })
+                    }
+                } else {
+                    myApp.alert(data.message);
+                }
+            }
+        });
+    });
+</script>
+</body>
+</html>

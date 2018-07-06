@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>服务购买</title>
+    <link rel="stylesheet" href="../css/framework7.ios.min.css">
+    <link rel="stylesheet" href="../css/framework7.ios.colors.min.css">
+    <link rel="stylesheet" href="../css/weui/weui.css">
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/my-app.css">
+    <style>
+        .f8 {
+            font-size: 1.1rem !important;
+        }
+
+        .propertyChange {
+            border: none;
+            appearance: none;
+            -moz-appearance: none;
+            -webkit-appearance: none;
+            background: url("../images/arrow.png") no-repeat scroll right center transparent;
+            padding: 0 14px;
+            color: #010101;
+            font-size: 1rem;
+        }
+
+        .binding {
+            float: left;
+            border-radius: 5px;
+            margin-left: 10px;
+            cursor: pointer;
+            width: 80px;
+            height: 30px;
+            line-height: 30px;
+            background-color: #2cb7ff;
+            color: white;
+            text-align: center;
+            border-color: white;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+<div class="views">
+    <div class="view view-main">
+        <div class="pages no-navbar">
+            <div data-page="purchaseList" class="page">
+                <div class="page-content">
+                    <div id="buy_container" class="">
+                        <div class="buy_user p-lr">
+                            <img src="" id="aclogo">
+                            <aside><select class="propertyChange" id="fuse_input"></select></aside>
+                        </div>
+                        <div id="bindingPhone"></div>
+                        <div class="text-muted p-lr f8 m-t m-bs">系统询价</div>
+                        <div class="goods_list" id="sysList"></div>
+                        <div style="border-bottom:1px solid #e7e7e7"></div>
+                        <div class="text-muted p-lr f8 m-t m-bs">快捷回价</div>
+                        <div class="goods_list" id="quickList">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="../js/framework7.js"></script>
+<script src="../js/jquery.js"></script>
+<script src="../js/store.min.js"></script>
+<script type="text/javascript">
+    var myApp = new Framework7({
+        modalCloseByOutside: false,
+        actionsCloseByOutside: false,
+        popupCloseByOutside: false,
+        onAjaxStart: function () {
+            myApp.showIndicator();
+        },
+        onAjaxComplete: function () {
+            myApp.hideIndicator();
+        },
+        modalTitle: '提示',
+        init: false
+    });
+    var $$ = Dom7;
+    myApp.onPageInit('purchaseList', function () {
+        var urlPropertyId = $$.parseQuery(document.url).propertyId;
+        $$.ajax({
+            url: '../product/getLoginImgUrl.do',
+            dataType: 'text',
+            method: 'get',
+            data: {},
+            beforeSend: function () {
+                myApp.showIndicator();
+            },
+            complete: function () {
+                myApp.hideIndicator();
+            },
+            success: function (data) {
+                $$('#aclogo').attr('src', data);
+            }, error: function () {
+                window.location.href = "/view/error.html";
+            }
+        });
+        getPropertTypeList(urlPropertyId);
+    });
+
+    function getPropertTypeList(urlPropertyId) {
+        $$.ajax({
+            url: '../product/propertTypeList.do',
+            dataType: 'json',
+            method: 'get',
+            data: {},
+            beforeSend: function () {
+                myApp.showIndicator();
+            },
+            complete: function () {
+                myApp.hideIndicator();
+            },
+            success: function (data) {
+                var productList = '';
+                $$.each(data, function (index, val) {
+                    var defaultPropertyId = urlPropertyId ? urlPropertyId : '92';
+                    var sel = val.propertyTypeId === defaultPropertyId ? 'selected' : '';
+                    productList += '<option value="' + val.propertyTypeId + '" ' + sel + '>' + val.name + '</option>';
+                });
+                $$('#fuse_input').html(productList);
+                getProductList($('#fuse_input option:selected').val());
+            }, error: function () {
+                window.location.href = "/view/error.html";
+            }
+        })
+    }
+    function getProductList(id) {
+        $$.ajax({
+            url: '../product/paymentList.do',
+            dataType: 'json',
+            method: 'get',
+            data: {
+                propertyId: id
+            },
+            beforeSend: function () {
+                myApp.showIndicator();
+            },
+            complete: function () {
+                myApp.hideIndicator();
+            },
+            success: function (data) {
+                var quickHtml = '', sysInquiryHtml = '', liHtml = '';
+
+                for (var i = 0; i < data.length; i++) {
+                    var val = data[i];
+                    var templateName = val.modelTemplateName;
+                    var giveTimes = val.giveTimes;
+                    if (templateName === '系统询价') {
+                        if (val.list.length > 0) {
+                            $$.each(val.list, function (index, list) {
+                                sysInquiryHtml += '<div class="goods_item" onclick="selecteProduct(this)" data-param="' + list.productName + ',' + list.price + ',' + list.count + ',' + list.productId + '"><h3>' + list.productName + '</h3><h3>' + list.count + '次</h3><p>售价' + list.price + '元</p></div>';
+                            })
+                        }
+                        else {
+                            sysInquiryHtml = '<p style="width: 100%;text-align: center">暂无产品配置</p>'
+                        }
+                    }
+                    if (templateName === '快捷回价') {
+                        if (val.list.length > 0) {
+                            $$.each(val.list, function (index, list) {
+                                quickHtml += '<div class="goods_item" onclick="selecteProduct(this)" data-param="' + list.productName + ',' + list.price + ',' + list.count + ',' + list.productId + '"><h3>' + list.productName + '</h3><h3>' + list.count + '次</h3><p>售价' + list.price + '元</p></div>';
+                            })
+                        }
+                        else {
+                            quickHtml = '<p style="width: 100%;text-align: center">暂无产品配置</p>'
+                        }
+                    }
+                    if (val.giveTimes !== '0') {
+                        liHtml += '<li>' + templateName + '' + giveTimes + '次</li>';
+                    }
+                }
+                if (liHtml !== '') {
+                    var bindingPhoneHtml = '<div class="buy_user" style="margin: 10px;height: auto">' +
+                        '<ul style="list-style:none" id="content"><li>绑定手机号可免费赠送：</li>' + liHtml + '</ul>' +
+                        '<div class="binding" onclick="startBinding();">立即绑定</div></div>';
+                    $$("#bindingPhone").html(bindingPhoneHtml);
+                }
+                $$('#sysList').html(sysInquiryHtml);
+                $$('#quickList').html(quickHtml);
+            }, error: function () {
+                window.location.href = "/view/error.html";
+            }
+        })
+    }
+    function startBinding() {
+        window.location.href = '/view/bindingPhone.html';
+    }
+
+    $$('#fuse_input').change(function (e) {
+        getProductList(e.target.value);
+    });
+
+    function selecteProduct(e) {
+        var param = $$(e).attr('data-param').split(',');
+        $$.ajax({
+            url: '../product/payment.do',
+            dataType: 'json',
+            method: 'post',
+            data: {
+                count: param[2],
+                price: param[1],
+                productId: param[3],
+                productName: param[0]
+            },
+            beforeSend: function () {
+                myApp.showIndicator();
+            },
+            complete: function () {
+                myApp.hideIndicator();
+            },
+            success: function (data) {
+                //处理微信支付后获取到的数据
+                if (typeof WeixinJSBridge === "undefined") {
+                    if (document.addEventListener) {
+                        document.addEventListener('WeixinJSBridgeReady', onBridgeReady(data), false);
+                    } else if (document.attachEvent) {
+                        document.attachEvent('WeixinJSBridgeReady', onBridgeReady(data));
+                        document.attachEvent('onWeixinJSBridgeReady', onBridgeReady(data));
+                    }
+                } else {
+                    onBridgeReady(data);
+                }
+            }, error: function () {
+                window.location.href = "/view/error.html"
+            }
+        })
+    }
+
+    function onBridgeReady(data) {
+        WeixinJSBridge.invoke(
+            'getBrandWCPayRequest', data,
+            function (res) {
+                if (res.err_msg === "get_brand_wcpay_request:ok") {
+                    var vmodal = myApp.modal({
+                        title: '提示',
+                        text: '支付成功！',
+                        buttons: [
+                            {
+                                text: '继续询价',
+                                onClick: function () {
+                                    window.location.href = 'http://caadwechat.visscaa.com/home/init.do';
+                                    myApp.closeModal(vmodal);
+                                    myApp.hideIndicator();
+                                }
+                            }
+                        ]
+                    });
+                } else {
+                    myApp.alert("支付失败！")
+                }    // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。
+            }
+        );
+    }
+    myApp.init();
+</script>
+</body>
+</html>

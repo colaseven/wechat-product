@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>快捷回价</title>
+    <link rel="stylesheet" href="../css/framework7.ios.min.css">
+    <link rel="stylesheet" href="../css/framework7.ios.colors.min.css">
+    <link rel="stylesheet" href="../css/weui/weui.css">
+    <link rel="stylesheet" href="../css/main.css">
+    <link href="https://cdn.bootcss.com/webuploader/0.1.1/webuploader.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/my-app.css">
+    <style>
+        .item-input input {
+            text-align: right;
+        }
+
+        .list-block .areas {
+            border: solid 1px #c8c7cc;
+            appearance: none;
+            -moz-appearance: none;
+            -webkit-appearance: none;
+            background: url("../images/arrow.png") no-repeat scroll right center transparent;
+            font-size: 0.9rem;
+            padding: 0.5em 0.8em;
+            border-radius: 6px;
+            height: auto;
+        }
+
+        .item-title, .list-block input[type=text], .list-block input[type=number], .list-block textarea {
+            color: #010101;
+            font-size: 0.9rem;
+        }
+
+        .item-input select, .list-block input[type=tel] {
+            color: #010101;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+<div class="views">
+    <div class="view view-main">
+        <div class="pages">
+            <div data-page="quickService" class="page no-navbar no-toolbar">
+                <div class="page-content" style="overflow: scroll;">
+                    <form id="my-form" class="list-block" style="margin:0;">
+                        <div class="errorHint"></div>
+                        <button type="reset" style="display:none"></button>
+                        <input type="hidden" name="propertyType">
+                        <input type="hidden" name="productId">
+                        <input type="hidden" name="id">
+                        <input type="hidden" name="entrustType" value="16941">
+                        <input type="hidden" name="landAcreage" value="0">
+                        <ul>
+                            <li class="row" style="text-align: center;padding: 5px 15px;margin:5px 0;border-bottom:1px solid #c8c7cc">
+                                <div class="col-30 pull-left">
+                                    <div class="item-input" style="margin:0">
+                                        <select id="province" name="province" class="areas">
+                                            <option value="0">请选择</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-30 pull-left">
+                                    <div class="item-input" style="margin:0">
+                                        <select id="city" name="city" class="areas">
+                                            <option value="0">请选择</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-30 pull-left">
+                                    <div class="item-input" style="margin:0">
+                                        <select id="country" name="county" class="areas">
+                                            <option value="0">请选择</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title label searchRequired" style="color:#ff3b30">所属项目</div>
+                                        <div class="item-input">
+                                            <input type="text" name="projectName" placeholder="请输入项目名址">
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title label  searchRequired" style="color:#ff3b30">详细地址</div>
+                                        <div class="item-input">
+                                            <input type="text" name="detailAddress" placeholder="请输入具体门牌地址">
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title label searchRequired" style="color:#ff3b30">建筑面积</div>
+                                        <div class="item-input">
+                                            <input type="number" name="floorAcreage" placeholder="请输入建筑面积">
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title label searchRequired" style="color:#ff3b30">姓名</div>
+                                        <div class="item-input">
+                                            <input type="text" name="inquirerName" placeholder="请输入询价人姓名">
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title label searchRequired" style="color:#ff3b30">手机号</div>
+                                        <div class="item-input">
+                                            <input type="number" name="mobilePhone" placeholder="请输入询价人手机号">
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title label">价值时点</div>
+                                        <div class="item-input">
+                                            <input type="text" placeholder="请选择价值时点" name="timePoint" value="" id="calendar" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title label">备注</div>
+                                        <div class="item-input">
+                                            <textarea class="resizable" style="text-align: right" name="remarks" placeholder="请输入备注信息"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                        <ul>
+                            <li class="accordion-item"><a href="javascript:void (0);" id="ctrl" class="item-content item-link">
+                                <div class="item-inner">
+                                    <div class="item-title">其他信息</div>
+                                </div>
+                            </a>
+                                <div class="" style="display: none;" id="ctrlTab">
+                                    <ul>
+                                        <li>
+                                            <div class="item-content">
+                                                <div class="item-inner">
+                                                    <div class="item-title label">购房日期</div>
+                                                    <div class="item-input">
+                                                        <input type="text" placeholder="请选择购房日期" name="purchaseTime" value="" id="purchaseDate" readonly>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="item-content">
+                                                <div class="item-inner">
+                                                    <div class="item-title label">登记价格</div>
+                                                    <div class="item-input">
+                                                        <input type="number" placeholder="请输入登记价格" name="purchasePrice" value="">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="item-content">
+                                                <div class="item-inner">
+                                                    <div class="item-title label">套内面积</div>
+                                                    <div class="item-input">
+                                                        <input type="number" name="internalArea" placeholder="请输入套内面积" value="">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="item-content">
+                                                <div class="item-inner">
+                                                    <div class="item-title label">竣工时间</div>
+                                                    <div class="item-input">
+                                                        <input type="number" placeholder="请选择竣工时间" value="" name="completionYear">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="item-content">
+                                                <div class="item-inner">
+                                                    <div class="item-title label">证载用途</div>
+                                                    <div class="item-input">
+                                                        <select id="Purpose" class="areas" dir="rtl" style="border:none;" name="purpose">
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="item-content">
+                                                <div class="item-inner">
+                                                    <div class="item-title label">使用权来源</div>
+                                                    <div class="item-input">
+                                                        <select id="LandTenureType" class="areas" dir="rtl" style="border:none;" name="landTenureTypes">
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="item-content">
+                                                <div class="item-inner">
+                                                    <div class="item-title label">权利人属性</div>
+                                                    <div class="item-input">
+                                                        <select id="Obligee" class="areas" dir="rtl" style="border:none;" name="obligee">
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="accordion-item"><a href="javascript:void (0);" class="item-content item-link" id="ctrlBase">
+                                <div class="item-inner">
+                                    <div class="item-title">上传附件</div>
+                                </div>
+                            </a>
+                                <div class="" style="display: none;" id="baseTab">
+                                    <ul>
+                                        <li>
+                                            <div class="item-content">
+                                                <div class="item-inner">
+                                                    <div class="item-title label">图片类型</div>
+                                                    <div class="item-input">
+                                                        <select id="pictureTypes" class="areas" dir="rtl" style="border:none;"></select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="item-content">
+                                                <div class="common_line publish_images" style="width:100%;margin:0">
+                                                    <div class="publish_image_upload" id="filePicker">+</div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+
+                                </div>
+                            </li>
+                        </ul>
+                        <div class="content-block">
+                            <p><a href="#" class="btn_primary" id="submitQuick">提交</a></p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="../js/framework7.js"></script>
+<script type="text/javascript" src="../js/jquery.js"></script>
+<script type="text/javascript" src="../js/store.min.js"></script>
+<script src="http://cdn.staticfile.org/webuploader/0.1.0/webuploader.html5only.min.js"></script>
+<script>
+    var myApp = new Framework7({
+        onAjaxStart: function () {
+            myApp.showIndicator();
+        },
+        onAjaxComplete: function () {
+            myApp.hideIndicator();
+        },
+        modalCloseByOutside: true,
+        actionsCloseByOutside: false,
+        popupCloseByOutside: false,
+        modalTitle: '提示',
+        init: false
+    });
+    var $$ = Dom7;
+    var pictureType = '', imgs = [], urlParam = $$.parseQuery(document.url), deftProvince = '', deftCity = '', deftCountry = '', purposeId = '', obligeeId = '', landTenureTypesId = '';
+
+    var mainView = myApp.addView('.view-main', {
+        dynamicNavbar: true,
+        domCache: true
+    });
+
+    var returnData = {};
+    myApp.onPageInit('quickService', function (page) {
+        $('#ctrl').click(function () {
+            $('#ctrlTab').slideToggle();
+            getSelectList();
+        });
+        $('#ctrlBase').click(function () {
+            $('#baseTab').slideToggle();
+            uploader();
+        });
+        $$('[type="reset"]').click();
+        /*初始化*/
+        $$('[name="propertyType"]').val(urlParam.propertyId);
+        $$('[name="productId"]').val(urlParam.productId);
+        if (urlParam.province !== undefined) {
+            deftCity = urlParam.city;
+            deftProvince = urlParam.province;
+        }
+        $('[name="internalArea"]').change(function () {
+            if ($$('[name="internalArea"]').val() <= 0) {
+                $$('[name="internalArea"]').val('');
+            }
+        });
+        $('[name="floorAcreage"]').change(function () {
+            if ($$('[name="floorAcreage"]').val() <= 0) {
+                $$('[name="floorAcreage"]').val('');
+            }
+        });
+        if (urlParam.id) {
+            $$.ajax({
+                url: '/quick/particulars.do',
+                dataType: 'json',
+                method: 'get',
+                data: {
+                    entrustId: $$.parseQuery(document.url).id
+                },
+                beforeSend: function () {
+                    myApp.showIndicator();
+                },
+                complete: function () {
+                    myApp.hideIndicator();
+                },
+                success: function (data) {
+                    returnData = data;
+                    deftProvince = returnData.province;
+                    deftCity = returnData.city;
+                    deftCountry = returnData.county;
+                    $$('[name="projectName"]').val(returnData.projectName);
+                    $$('[name="detailAddress"]').val(returnData.detailAddress);
+                    $$('[name="floorAcreage"]').val(returnData.floorAcreage);
+                    $$('[name="remarks"]').val(returnData.remarks);
+                    $$('[name="purchasePrice"]').val(returnData.purchasePrice);
+                    $$('[name="internalArea"]').val(returnData.internalArea);
+                    $$('[name="completionYear"]').val(returnData.completionYear);
+                    $$('[name="inquirerName"]').val(returnData.inquirerName);
+                    $$('[name="mobilePhone"]').val(returnData.mobilePhone);
+                    $$('[name="timePoint"]').val(returnData.timePoint);
+                    $$('[name="purchaseTime"]').val(returnData.purchaseTime);
+                    $$('[name="id"]').val(urlParam.id);
+                    purposeId = returnData.purpose;
+                    obligeeId = returnData.obligee;
+                    landTenureTypesId = returnData.landTenureTypes;
+                    getArea('province', '', deftProvince, '0', urlParam.propertyId);
+                }, error: function () {
+                    window.location.href = "/view/error.html";
+                }
+            })
+        } else if (urlParam.isShift === '0') {//转快捷回价
+            deftProvince = store.get('dataParam').provinceCode;
+            deftCity = store.get('dataParam').cityCode;
+            deftCountry = store.get('dataParam').countyCode;
+            $$('[name="projectName"]').val(store.get('detailParam').projectName);
+            $$('[name="detailAddress"]').val(store.get('detailParam').detailAddress);
+            $$('[name="floorAcreage"]').val(store.get('detailParam').structureArea);
+            getArea('province', '', deftProvince, '0', urlParam.propertyId);
+        } else {
+            getArea('province', '', deftProvince, '0', urlParam.propertyId);
+        }
+        createCalendar('calendar');
+        createCalendar('purchaseDate');
+        getPictureList();
+    });
+    function getArea(ele, id, defaultCode, level, propertyId) {
+        $$.ajax({
+            url: '/quick/areas.do',
+            dataType: 'json',
+            method: 'get',
+            data: {
+                id: id,
+                level: level,
+                propertyId: propertyId
+            },
+            beforeSend: function () {
+                myApp.showIndicator();
+            },
+            complete: function () {
+                myApp.hideIndicator();
+            },
+            success: function (data) {
+                var html = '<option value="0">请选择</option>';
+                if (data !== '') {
+                    $$.each(data, function (index, val) {
+                        var sel = val.id === defaultCode ? 'selected' : '';
+                        html += '<option value="' + val.id + '" ' + sel + '>' + val.text + '</option>';
+                    })
+                }
+                $$('#' + ele).html(html);
+                if (deftCity !== '' && ele === 'province' && $('#province option:selected').val() !== '0') {
+                    getArea('city', $('#province option:selected').val(), deftCity, '1', urlParam.propertyId);
+                }
+                if (ele === 'city' && $('#city option:selected').val() !== '0') {
+                    getArea('country', $('#city option:selected').val(), deftCountry, '2', urlParam.propertyId);
+                }
+            }, error: function () {
+                window.location.href = "/view/error.html";
+            }
+        })
+    }
+    $$('#province').change(function (e) {
+        $$('#city').html('<option value="0">请选择</option>');
+        $$('#country').html('<option value="0">请选择</option>');
+        var selected = e.target.value;
+        getArea('city', selected, '', '1', urlParam.propertyId);
+    });
+    $$('#city').change(function (e) {
+        $$('#country').html('<option value="0">请选择</option>');
+        var selected = e.target.value;
+        getArea('country', selected, '', '2', urlParam.propertyId);
+    });
+
+    /*修改图片类型*/
+    $$('#pictureTypes').change(function (e) {
+        pictureType = e.target.value;
+        $$('.imgCtr').hide();
+        $$('#' + pictureType).show();
+    });
+    function createCalendar(id) {
+        myApp.calendar({
+            input: '#' + id,
+            monthNames: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+            monthNamesShort: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+            dayNames: ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'],
+            dayNamesShort: ['日', '一', '二', '三', '四', '五', '六'],
+            value: [new Date()],
+            closeOnSelect: true
+        });
+    }
+    function getSelectList() {
+        $$.ajax({
+            url: '/quick/getSelect.do',
+            dataType: 'json',
+            method: 'post',
+            data: {},
+            beforeSend: function () {
+                myApp.showIndicator();
+            },
+            complete: function () {
+                myApp.hideIndicator();
+            },
+            success: function (data) {
+                createList(data['Obligee'], 'Obligee', obligeeId);
+                createList(data['LandTenureType'], 'LandTenureType', landTenureTypesId);
+                createList(data['Purpose'], 'Purpose', purposeId);
+            }, error: function () {
+                window.location.href = "/view/error.html";
+            }
+        })
+    }
+    function createList(data, id) {
+        var listHtml = '';
+        $$.each(data, function (index, val) {
+            var sel;
+            switch (id) {
+                case 'Purpose':
+                    sel = val.id === returnData.purpose ? 'selected' : '';
+                    break;
+                case 'LandTenureType':
+                    sel = val.id === returnData.landTenureTypes ? 'selected' : '';
+                    break;
+                case 'Obligee':
+                    sel = val.id === returnData.obligee ? 'selected' : '';
+                    break;
+            }
+            listHtml += '<option value="' + val.id + '" ' + sel + '>' + val.text + '</option>';
+        });
+        $$('#' + id).html(listHtml);
+    }
+    function getPictureList() {
+        $$.ajax({
+            url: '/quick/getAttachmentTypes.do',
+            dataType: 'json',
+            method: 'post',
+            data: {},
+            beforeSend: function () {
+                myApp.showIndicator();
+            },
+            complete: function () {
+                myApp.hideIndicator();
+            },
+            success: function (data) {
+                var picHtml = '', inx = 0, container = '';
+                $$.each(data, function (index, val) {
+                    if (val.isCurrent === true) {
+                        inx = index;
+                    }
+                    picHtml += '<option value="' + val.value + '">' + val.text + '</option>';
+                    container += '<div class="imgCtr" id="' + val.value + '" style="display:none;"></div>';
+                });
+                $$('#pictureTypes').html(picHtml).find('option').eq(inx).prop('selected', true);
+                pictureType = $$('#pictureTypes').find('option').eq(inx).val();
+                $$('.publish_images').prepend(container);
+                $$('#' + pictureType).show();
+            }, error: function () {
+                window.location.href = "/view/error.html";
+            }
+        })
+    }
+    /*删除图片*/
+    function uploadedRemove(e) {
+        var ele = $$(e).parent();
+        ele.remove();
+        $$.each(imgs, function (index, data) {
+            if (data.id === $$(e).attr('data-id')) {
+                imgs.splice(index, 1);
+            }
+        })
+    }
+    /*上传图片*/
+    function uploader() {
+        var uploader = WebUploader.create({
+            auto: true,
+            // 文件接收服务端。
+            server: '/quick/fileUpload.do',
+            pick: '#filePicker',
+            fileNumLimit: 10,
+            chunked: true,
+            accept: {
+                title: 'Images',
+                extensions: 'jpg,jpeg,bmp,png',
+                mimeTypes: 'image/*'
+            },
+            formData: {
+                pictureType: ''
+            }
+        });
+        uploader.on('uploadStart', function (file) {
+            file.save_key = pictureType;
+            uploader.option('formData', {
+                pictureType: file.save_key
+            });
+        });
+        uploader.on('uploadSuccess', function (file, response) {
+            var imgList = '<div class="publish_image_item pull-left"><span class="iconfont" data-id="' + file.id + '" onclick="uploadedRemove(this)">&#xe69a;</span></aside><img src="' + response.filePath + '"></div>';
+            $$('#' + pictureType).append(imgList);
+            imgs.push({
+                name: file.name,
+                type: file.save_key,
+                id: file.id,
+                url: response.filePath
+            })
+        });
+        uploader.on('uploadError', function (file) {
+            myApp.alert(file.name + '上传失败');
+        })
+    }
+
+    $('[name="mobilePhone"]').change(function () {
+        var myreg = /^[1][3,4,5,7,8][0-9]{9}$/;
+        if (!myreg.test($$('[name="mobilePhone"]').val())) {
+            $$('[name="mobilePhone"]').val('');
+            hintMessage("手机号码格式错误");
+        }
+    });
+    /*提交表单*/
+    $$('#submitQuick').click(function () {
+        if (urlParam.isAgainAssess === '1') {//判断是否重新询价
+            $$('[name="id"]').val('');
+        }
+        var formData = myApp.formToJSON('#my-form');
+        formData.imgs = imgs;
+        if (formData.county === '0') {
+            hintMessage("请填写完整的省市区");
+            return;
+        }
+        if (formData.projectName === '') {
+            hintMessage("所属项目为必填项");
+            return;
+        }
+        if (formData.detailAddress === '') {
+            hintMessage("详细地址为必填项");
+            return;
+        }
+        if (formData.floorAcreage === '') {
+            hintMessage("建筑面积为必填项");
+            return;
+        }
+        if (formData.inquirerName === '') {
+            hintMessage("姓名为必填项");
+            return;
+        }
+        if (formData.mobilePhone === '') {
+            hintMessage("手机号为必填项");
+            return;
+        }
+        param = JSON.stringify(formData);
+        $$.ajax({
+            url: '/quick/save.do',
+            dataType: 'json',
+            method: 'post',
+            data: {
+                model: param,
+                type : "quick"
+            },
+            beforeSend: function () {
+                myApp.showIndicator();
+            },
+            complete: function () {
+                myApp.hideIndicator();
+            },
+            success: function (data) {
+                if (data.state === 2) {
+                    window.location.href = "/view/quickSuccess.html";
+                } else {
+                    myApp.alert(data.message);
+                }
+            }, error: function () {
+                window.location.href = "/view/error.html";
+            }
+        })
+    });
+
+    /**
+     * 必填项及错误信息提示
+     * @param text
+     */
+    function hintMessage(text) {
+        var errorHint = $$('.errorHint');
+        errorHint.css('display', 'block');
+        errorHint.text(text);
+        setTimeout(function () {
+            errorHint.css('display', 'none');
+        }, 2000);
+    }
+    myApp.init();
+</script>
+</body>
+</html>
